@@ -31,7 +31,7 @@ class Walrus
 {
 public:
     Walrus();  // Constructor
-    uint8_t begin(uint8_t Address_ = 0x0D); // Collect address value, use default
+    uint8_t begin(uint8_t Address_ = ADR_DEFAULT); // Collect address value, use default
 
     // Return calculated temperature from sensor
     float getTemperature(uint8_t Location);
