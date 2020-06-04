@@ -80,12 +80,12 @@ float Walrus::getPressure()
     else return -9999.0; //Else return error condition
 }
 
-String Walrus::GetHeader()
+String Walrus::getHeader()
 {
     return "Pressure [mBar],Temp DH [C],Temp DHt [C],"; //return header string
 }
 
-String Walrus::GetString()
+String Walrus::getString()
 {
     //Return data string
     return String(getPressure()) + "," + String(getTemperature(0)) + "," \
