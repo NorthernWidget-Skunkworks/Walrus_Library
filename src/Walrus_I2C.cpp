@@ -67,6 +67,11 @@ float Walrus::getTemperature(uint8_t Location) //Returns temp in C from either s
         TempData[i] = Wire.read(); //Read in data
     }
 
+    long TempVal = 0; //Used to comcatonate registers 
+    for(int i = 0; i < TEMP_OFFSET; i++) {
+        TempVal = TempVal | (TempData[i] << 8*i);
+    }
+
     // if(Error == 0) return float(long((TempData[1] << 8) | (TempData[0])))/100.0; //If no error, return concatonated, scaled value
     if(Error == 0) return float(TempVal)/10000.0; //If no error, return scaled result 
     else return -9999.0; //Else return error condition 
