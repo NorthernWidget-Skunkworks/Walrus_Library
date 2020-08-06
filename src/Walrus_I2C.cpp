@@ -1,17 +1,11 @@
 /******************************************************************************
 Walrus.cpp
-Library for TP-Downhole pressure and tempurature sensor, made by Northern Widget LLC.
+Library for Walrus pressure and tempurature sensor, made by Northern Widget LLC.
+Based off of the TP-Downhole
 Bobby Schulz @ Northern Widget LLC
 5/9/2018
-Hardware info located at: https://github.com/NorthernWidget/TP-DownHole
-
-The TP-Downhole is a small form factor tempreture and pressure sensor which uses a combination of an 
-MS5803 pressure sensor and an MCP3421 ADC in combination with a thermistor for high accuracy
-tempreture measurment.
-
-"Size matters not. Look at me. Judge me by my size do you? And well you should not. For my ally is the
-Force, and a powerful ally it is"
--Yoda
+Hardware info located at:
+https://github.com/NorthernWidget-Skunkworks/Project-Walrus
 
 Distributed as-is; no warranty is given.
 ******************************************************************************/
@@ -27,7 +21,7 @@ Walrus::Walrus()
 
 uint8_t Walrus::begin(uint8_t Address_)
 {
-    Wire.begin(); //Initialize Wire instance 
+    Wire.begin(); //Initialize Wire instance
     ADR = Address_; //Copy address to local
 }
 
@@ -63,24 +57,23 @@ float Walrus::getTemperature(uint8_t Location) //Returns temp in C from either s
     long TempData[TEMP_OFFSET] = {0}; //Make temp data storage location
     uint8_t Offset = 0; //Default to TEMP_REG_0
     int Error = 0; //Error used for testing transmission
-    if(Location == 1) Offset = TEMP_OFFSET;
+<<<<<<< HEAD
+    if(Location == 1) Offset = 0x02;
     // Wire.beginTransmission(ADR);
     // Wire.write(TEMP_REG_0 + Offset); 
     // Error = Wire.endTransmission();
+=======
+    if(Location == 1) Offset = 0x03;
+>>>>>>> master
 
-    // Wire.requestFrom(ADR, 3); //Read 3 bytes from device
     for(int i = 0; i < TEMP_OFFSET; i++) { //Increment over read
         Wire.beginTransmission(ADR);
-        Wire.write(TEMP_REG_0 + Offset + i); 
+        Wire.write(TEMP_REG_0 + Offset + i);
         Error = Wire.endTransmission();
         Wire.requestFrom((int)ADR, 1); //Cast ADR to match function
         TempData[i] = Wire.read(); //Read in data
     }
-
-    long TempVal = 0;
-    for(int i = 0; i < 4; i++) {
-        TempVal = TempVal | (TempData[i] << 8*i);
-    }
+<<<<<<< HEAD
     // Serial.print("\n\n"); //DEBUG!
     // Serial.println(TEMP_REG_0 + Offset, HEX);
     // Serial.println(TempData[2], HEX);
@@ -89,12 +82,24 @@ float Walrus::getTemperature(uint8_t Location) //Returns temp in C from either s
     // if(Error == 0) return float(long((TempData[1] << 8) | (TempData[0])))/100.0; //If no error, return concatonated, scaled value
     if(Error == 0) return float(TempVal)/10000.0; //If no error, return scaled result 
     else return -9999.0; //Else return error condition 
+=======
+    if(Error == 0){
+        //If no error, return concatonated, scaled value
+        return float( long( (TempData[2] << 16) |
+                            (TempData[1] << 8 ) |
+                            (TempData[0]) ) ) / 1000.0;
+    }
+    else{
+        // Else return error condition
+        return -9999.0;
+    }
+>>>>>>> master
 }
 
 
 float Walrus::getTemperature() //By default get thermistor temp value
 {
-    return getTemperature(1); 
+    return getTemperature(1);
 }
 
 
@@ -125,17 +130,18 @@ float Walrus::getPressure()
     long TempData[4] = {0}; //Make temp data storage location
     int Error = 0; //Error used for testing transmission
     // Wire.beginTransmission(ADR);  //Command for data
-    // Wire.write(PRES_REG); 
+    // Wire.write(PRES_REG);
     // Error = Wire.endTransmission();
 
     for(int i = 0; i < 4; i++) { //Increment over read
         Wire.beginTransmission(ADR);
-        Wire.write(PRES_REG + i); 
+        Wire.write(PRES_REG + i);
         Error = Wire.endTransmission();
         Wire.requestFrom((int)ADR, 1); //Cast ADR to match function
         TempData[i] = Wire.read(); //Read in data
     }
 
+<<<<<<< HEAD
     long PresVal = 0;
     for(int i = 0; i < 4; i++) {
         PresVal = PresVal | (TempData[i] << 8*i);
@@ -143,14 +149,28 @@ float Walrus::getPressure()
 
     if(Error == 0) return float(PresVal)/1000.0; //If no error, return concatonated, scaled value
     else return -9999.0; //Else return error condition 
+=======
+    if(Error == 0){
+        //If no error, return concatonated, scaled value
+        return float( long( (TempData[2] << 16) |
+                            (TempData[1] << 8) |
+                            (TempData[0]) ) ) / 1000.0;
+    }
+    else{
+        //Else return error condition
+        return -9999.0;
+    }
+>>>>>>> master
 }
 
-String Walrus::GetHeader() 
+String Walrus::getHeader()
 {
-    return "Pressure [mBar], Temp DH [C], Temp DHt [C], "; //return header string
+    return "Pressure [mBar],Temp DH [C],Temp DHt [C],"; //return header string
 }
 
-String Walrus::GetString()
+String Walrus::getString()
 {
-    return String(getPressure()) + "," + String(getTemperature(0)) + "," + String(getTemperature(1)) + ","; //Return data string
+    //Return data string
+    return String(getPressure()) + "," + String(getTemperature(0)) + "," \
+                                       + String(getTemperature(1)) + ",";
 }
