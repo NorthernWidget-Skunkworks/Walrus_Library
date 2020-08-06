@@ -21,12 +21,16 @@ Distributed as-is; no warranty is given.
 
 #include <Arduino.h>
 
+// #define TEMP_REG_0 0x06 //Location of external temp val on Walrus 
 #define TEMP_REG_0 0x06 //Location of external temp val on Walrus 
-#define TEMP_REG_1 0x09 //Location of MS5803 temp val on Walrus
-#define TEMP_OFFSET 0x03 //Define length (offset) of tempurate vals in bytes
-#define PRES_REG 0x03 //Location of pressure register on Walrus
+// #define TEMP_REG_1 0x09 //Location of MS5803 temp val on Walrus
+#define TEMP_REG_1 0x08 //Location of MS5803 temp val on Walrus
+// #define TEMP_OFFSET 0x03 //Define length (offset) of tempurate vals in bytes
+#define TEMP_OFFSET 0x02 //Define length (offset) of tempurate vals in bytes
+// #define PRES_REG 0x03 //Location of pressure register on Walrus
+#define PRES_REG 0x02 //Location of pressure register on Walrus
 
-#define ADR_DEFAULT 0x0D //Define default address
+#define ADR_DEFAULT 0x4D //Define default address
 class Walrus
 {
 public:
