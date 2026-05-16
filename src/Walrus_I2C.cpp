@@ -1,6 +1,6 @@
 /******************************************************************************
 Walrus.cpp
-Library for Walrus pressure and tempurature sensor, made by Northern Widget LLC.
+Library for Walrus pressure and temperature sensor, made by Northern Widget LLC.
 Based off of the TP-Downhole
 Bobby Schulz @ Northern Widget LLC
 5/9/2018
@@ -67,7 +67,7 @@ float Walrus::getTemperature(uint8_t Location) //Returns temp in C from either s
         TempData[i] = Wire.read(); //Read in data
     }
 
-    long TempVal = 0; //Used to comcatonate registers 
+    long TempVal = 0; //Used to concatenate registers
     for(int i = 0; i < TEMP_OFFSET; i++) {
         TempVal = TempVal | (TempData[i] << 8*i);
     }

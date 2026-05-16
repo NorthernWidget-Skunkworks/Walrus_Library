@@ -1,6 +1,6 @@
 /******************************************************************************
 Walrus.cpp
-Library for Walrus pressure and tempurature sensor, made by Northern Widget LLC.
+Library for Walrus pressure and temperature sensor, made by Northern Widget LLC.
 Based off of the TP-Downhole
 Bobby Schulz @ Northern Widget LLC
 5/9/2018
@@ -19,8 +19,8 @@ Distributed as-is; no warranty is given.
 #define TEMP_REG_0 0x06 //Location of external temp val on Walrus 
 // #define TEMP_REG_1 0x09 //Location of MS5803 temp val on Walrus
 #define TEMP_REG_1 0x0A //Location of MS5803 temp val on Walrus
-// #define TEMP_OFFSET 0x03 //Define length (offset) of tempurate vals in bytes
-#define TEMP_OFFSET 0x04 //Define length (offset) of tempurate vals in bytes
+// #define TEMP_OFFSET 0x03 //Define length (offset) of temperature vals in bytes
+#define TEMP_OFFSET 0x04 //Define length (offset) of temperature vals in bytes
 // #define PRES_REG 0x03 //Location of pressure register on Walrus
 #define PRES_REG 0x02 //Location of pressure register on Walrus
 
@@ -29,7 +29,7 @@ Distributed as-is; no warranty is given.
 /**
  * @class Walrus: .
  * @brief Class to interface with the Walrus submersible temperature and
- * presure sensor
+ * pressure sensor
  * @details The Walrus is an encapsulated submersible
  * pressure and temperature sensor intended for water-level or barometric
  * monitoring.
@@ -49,8 +49,6 @@ class Walrus
          * @brief Begin communications with the Walrus using a prescribed
          * address.
          * @param Address_: I2C address of Walrus
-         * DOES NOT YET USE A VARIABLE ADDRESS!
-         * THIS DEFAULT ADDRESS CURRENTLY CLASHES WITH HAAR'S DEFAULT!
          */
         uint8_t begin(uint8_t Address_ = ADR_DEFAULT);
 
@@ -61,8 +59,8 @@ class Walrus
          *
          * @param Location
          * TEMP_REG_0: Read dedicated temperature sensor.
-         * TEMP_REG_1: Read temperature sensor withn the MS5803.
-         * APPEARS TO JUST WORK WIHT TEMP_REG_0 FOR NOW
+         * TEMP_REG_1: Read temperature sensor within the MS5803.
+         * APPEARS TO JUST WORK WITH TEMP_REG_0 FOR NOW
          */
         float getTemperature(uint8_t Location);
 

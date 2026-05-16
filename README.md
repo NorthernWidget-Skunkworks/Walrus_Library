@@ -2,11 +2,11 @@
 
  Members                        | Descriptions                                
 --------------------------------|---------------------------------------------
-`class `[`Walrus`](#classWalrus) | Class to interface with the [Walrus](#classWalrus) submersible temperature and presure sensor.
+`class `[`Walrus`](#classWalrus) | Class to interface with the [Walrus](#classWalrus) submersible temperature and pressure sensor.
 
 # class `Walrus` 
 
-Class to interface with the [Walrus](#classWalrus) submersible temperature and presure sensor.
+Class to interface with the [Walrus](#classWalrus) submersible temperature and pressure sensor.
 
 The [Walrus](#classWalrus) is an encapsulated submersible pressure and temperature sensor intended for water-level or barometric monitoring.
 
@@ -44,7 +44,7 @@ Return calculated temperature from [Walrus](#classWalrus).
 This calculated temperature can be from either the MS5803 sensor, which primarily measures pressure, or from the
 
 #### Parameters
-* `Location` TEMP_REG_0: Read dedicated temperature sensor. TEMP_REG_1: Read temperature sensor withn the MS5803. APPEARS TO JUST WORK WIHT TEMP_REG_0 FOR NOW
+* `Location` TEMP_REG_0: Read dedicated temperature sensor. TEMP_REG_1: Read temperature sensor within the MS5803. APPEARS TO JUST WORK WITH TEMP_REG_0 FOR NOW
 
 #### `public float `[`getTemperature`](#classWalrus_1a18b8301db55eae06af23ee572d9b5c96)`()` 
 
