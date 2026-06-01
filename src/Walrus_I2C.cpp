@@ -135,23 +135,14 @@ bool Walrus::newData()  // Checks for updated/valid data
 {
     unsigned long timeout = millis(); // Get timeout value
     Wire.beginTransmission(ADR);
-    Wire.write(0x00);
+    Wire.write(0x20); //Schema 1 Page 1 status byte
     Wire.endTransmission();
     Wire.requestFrom(ADR, 1);
-    // Wait for value to be returned //FIX! add timeout/remove
     while(Wire.available() < 1 && (millis() - timeout < timeoutGlobal)) {
         delay(1);
     }
-    uint8_t val = Wire.read();  //DEBUG!
-
-    bool state = false;
-    // bool state = ~(val & 0x01);
-    if((val & 0x80) == 0x80) state = true;  //FIX! Make cleaner
-    else state = false;
-    // Serial.println(state); //DEBUG!
-    // Return inverse of bit 0, true when bit has been cleared,
-    // false when waiting for new conversion
-    return (state);
+    uint8_t val = Wire.read();
+    return (val & 0x01) != 0;
 }
 
 String Walrus::getHeader()
