@@ -54,27 +54,17 @@ uint8_t Walrus::begin(uint8_t Address_)
 
 float Walrus::getTemperature(uint8_t Location) //Returns temp in C from either subsensor
 {
-    long TempData[TEMP_OFFSET] = {0}; //Make temp data storage location
-    uint8_t Offset = 0; //Default to TEMP_REG_0
-    int Error = 0; //Error used for testing transmission
-    if(Location == 1) Offset = TEMP_OFFSET;
-
-    for(int i = 0; i < TEMP_OFFSET; i++) { //Increment over read
-        Wire.beginTransmission(ADR);
-        Wire.write(TEMP_REG_0 + Offset + i);
-        Error = Wire.endTransmission();
-        Wire.requestFrom((int)ADR, 1); //Cast ADR to match function
-        TempData[i] = Wire.read(); //Read in data
-    }
-
-    long TempVal = 0; //Used to concatenate registers
-    for(int i = 0; i < TEMP_OFFSET; i++) {
-        TempVal = TempVal | (TempData[i] << 8*i);
-    }
-
-    // if(Error == 0) return float(long((TempData[1] << 8) | (TempData[0])))/100.0; //If no error, return concatonated, scaled value
-    if(Error == 0) return float(TempVal)/10000.0; //If no error, return scaled result 
-    else return -9999.0; //Else return error condition 
+    uint8_t reg = (Location == 0) ? TEMP_EXT : TEMP_MS5803;
+    int Error = 0;
+    Wire.beginTransmission(ADR);
+    Wire.write(reg);
+    Error = Wire.endTransmission();
+    Wire.requestFrom((int)ADR, 2);
+    uint8_t lo = Wire.read();
+    uint8_t hi = Wire.read();
+    int16_t val = (int16_t)((uint16_t)hi << 8 | lo);
+    if(Error == 0) return float(val) / 100.0;
+    else return -9999.0;
 }
 
 
