@@ -144,7 +144,14 @@ bool Walrus::newData()  // Checks for updated/valid data
     }
     uint8_t val = Wire.read();  //DEBUG!
 
-    return (val & 0x01) != 0;
+    bool state = false;
+    // bool state = ~(val & 0x01);
+    if((val & 0x80) == 0x80) state = true;  //FIX! Make cleaner
+    else state = false;
+    // Serial.println(state); //DEBUG!
+    // Return inverse of bit 0, true when bit has been cleared,
+    // false when waiting for new conversion
+    return (state);
 }
 
 String Walrus::getHeader()
