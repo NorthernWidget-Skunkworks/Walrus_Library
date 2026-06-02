@@ -8,6 +8,16 @@ date-released: 2026-06-01
 url: "https://github.com/NorthernWidget-Skunkworks/Walrus_Library"
 repository-code: "https://github.com/NorthernWidget-Skunkworks/Walrus_Library"
 license: GPL-3.0-only
+abstract: "Arduino library for the Northern Widget Walrus submersible pressure and
+  temperature sensor. Communicates with the Walrus over I²C and returns calibrated
+  pressure (mbar) and temperature (°C) as floating-point values or comma-separated
+  strings compatible with Northern Widget data loggers."
+keywords:
+  - Arduino
+  - pressure sensor
+  - water level
+  - I2C
+  - Northern Widget
 authors:
 - family-names: "Schulz"
   given-names: "Bobby"
