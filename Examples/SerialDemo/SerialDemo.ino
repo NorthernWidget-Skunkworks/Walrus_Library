@@ -1,9 +1,9 @@
 /******************************************************************************
 SerialDemo.ino
-Basic serial demo script for TP-Downhole pressure and temperature sensor, made by Northern Widget LLC.
+Basic serial demo script for the Walrus pressure and temperature sensor, made by Northern Widget LLC.
 Bobby Schulz @ Northern Widget LLC
 2/28/2020
-Hardware info located at: https://github.com/NorthernWidget/TP-DownHole
+Hardware info located at: https://github.com/NorthernWidget-Skunkworks/Project-Walrus
 
 This code reads temperature and pressure data from the Walrus over I2C and displays it via serial
 
