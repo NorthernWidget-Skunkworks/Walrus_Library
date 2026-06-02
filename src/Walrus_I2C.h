@@ -19,7 +19,7 @@ Distributed as-is; no warranty is given.
 #define TEMP_MS5803 0x26  // Schema 1 Page 1: MS5803 temperature, int16, 0.01 °C
 #define TEMP_EXT    0x28  // Schema 1 Page 1: external temperature (MCP9808), int16, 0.01 °C
 
-#define ADR_DEFAULT 0x4D //Define default address
+#define ADR_DEFAULT 0x57 // Schema 1: 'W' (ASCII mnemonic)
 
 /**
  * @class Walrus: .
