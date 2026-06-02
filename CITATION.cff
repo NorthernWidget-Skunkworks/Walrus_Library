@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Walrus_Library"
+version: 0.2.0
+doi: 10.5281/zenodo.4572367
+date-released: 2026-06-01
+url: "https://github.com/NorthernWidget-Skunkworks/Walrus_Library"
+repository-code: "https://github.com/NorthernWidget-Skunkworks/Walrus_Library"
+license: GPL-3.0-only
+authors:
+- family-names: "Schulz"
+  given-names: "Bobby"
+  orcid: "https://orcid.org/0000-0002-9272-4756"
+- family-names: "Wickert"
+  given-names: "Andrew D."
+  orcid: "https://orcid.org/0000-0002-9545-3365"

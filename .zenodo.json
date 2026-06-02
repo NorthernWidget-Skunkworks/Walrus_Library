@@ -1,0 +1,25 @@
+{
+  "title": "Walrus_Library",
+  "description": "Arduino library for the Northern Widget Walrus submersible pressure and temperature sensor.",
+  "upload_type": "software",
+  "license": {"id": "GPL-3.0-only"},
+  "creators": [
+    {
+      "name": "Schulz, Bobby",
+      "orcid": "0000-0002-9272-4756",
+      "affiliation": "Northern Widget LLC"
+    },
+    {
+      "name": "Wickert, Andrew D.",
+      "orcid": "0000-0002-9545-3365",
+      "affiliation": "University of Minnesota, Department of Earth & Environmental Sciences"
+    }
+  ],
+  "keywords": [
+    "Arduino",
+    "pressure sensor",
+    "water level",
+    "I2C",
+    "Northern Widget"
+  ]
+}
