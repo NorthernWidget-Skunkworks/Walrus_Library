@@ -10,7 +10,7 @@ Class to interface with the [Walrus](#classWalrus) submersible temperature and p
 
 The [Walrus](#classWalrus) is an encapsulated submersible pressure and temperature sensor intended for water-level or barometric monitoring.
 
-[![DOI](https://zenodo.org/badge/219609527.svg)](https://zenodo.org/badge/latestdoi/219609527)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4572367.svg)](https://doi.org/10.5281/zenodo.4572367)
 
 ## Summary
 
