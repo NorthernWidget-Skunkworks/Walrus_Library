@@ -15,9 +15,9 @@ Distributed as-is; no warranty is given.
 
 #include <Arduino.h>
 
-#define PRES_REG    0x22  // Schema 1 Page 1: pressure, int32, µBar
-#define TEMP_MS5803 0x26  // Schema 1 Page 1: MS5803 temperature, int16, 0.01 °C
-#define TEMP_EXT    0x28  // Schema 1 Page 1: external temperature (MCP9808), int16, 0.01 °C
+#define PRES_REG    0x28  // Schema 1 Page 1 Block 1: pressure, int32, µBar
+#define TEMP_MS5803 0x2C  // Schema 1 Page 1 Block 1: MS5803 temperature, int16, 0.01 °C
+#define TEMP_EXT    0x30  // Schema 1 Page 1 Block 2: external temperature (MCP9808), int16, 0.01 °C
 
 #define ADR_DEFAULT 0x57 // Schema 1: 'W' (ASCII mnemonic)
 
