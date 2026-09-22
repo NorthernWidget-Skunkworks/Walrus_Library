@@ -19,7 +19,6 @@ Distributed as-is; no warranty is given.
 #define TEMP_MS5803 0x2C  // Schema 1 Page 1 Block 1: MS5803 temperature, int16, 0.01 °C
 #define TEMP_EXT    0x30  // Schema 1 Page 1 Block 2: external temperature (MCP9808), int16, 0.01 °C
 
-#define ADR_DEFAULT 0x57 // Schema 1: 'W' (ASCII mnemonic)
 
 /**
  * @class Walrus: .
@@ -34,6 +33,9 @@ Distributed as-is; no warranty is given.
 class Walrus
 {
     public:
+        /** @brief Default I2C address: NW-Device-Specification Schema 1 'W' (0x57). */
+        static constexpr uint8_t DEFAULT_ADDRESS = 0x57;
+
 
         /**
          * @brief Instantiate Walrus object
@@ -45,7 +47,7 @@ class Walrus
          * address.
          * @param Address_: I2C address of Walrus
          */
-        uint8_t begin(uint8_t Address_ = ADR_DEFAULT);
+        uint8_t begin(uint8_t Address_ = DEFAULT_ADDRESS);
 
         /**
          * @brief Return calculated temperature from Walrus.
@@ -95,8 +97,13 @@ class Walrus
         bool newData();
 
     private:
-        uint8_t ADR = ADR_DEFAULT; //Default address
+        uint8_t ADR = DEFAULT_ADDRESS; //Default address
         unsigned long timeoutGlobal = 1000; //Timeout value, ms //FIX??
 };
+
+/** @deprecated Use Walrus::DEFAULT_ADDRESS. Every NW library defined this same macro
+ *  with a different value, so a sketch including two of them got the last one.
+ *  Removed at the next major version. */
+#define ADR_DEFAULT Walrus::DEFAULT_ADDRESS
 
 #endif
