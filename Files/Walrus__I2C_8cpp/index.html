@@ -1,0 +1,473 @@
+
+
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.28.1 by Michael Rose
+  Copyright 2013-2026 Michael Rose - mademistakes.com | @mmistakes
+  Copyright 2024-2026 iBug - ibugone.com | @iBug
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+
+<html lang="en" class="no-js" dir="ltr">
+  <head>
+    
+<meta charset="utf-8">
+
+
+<!-- begin _includes/seo.html --><title>src/Walrus_I2C.cpp - Walrus Library</title>
+<meta name="description" content="Connect to Walrus pressure sensors">
+
+
+  <meta name="author" content="Northern Widget">
+  
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Walrus Library">
+<meta property="og:title" content="src/Walrus_I2C.cpp">
+<meta property="og:url" content="https://docs.northernwidget.com/Walrus_Library/Files/Walrus__I2C_8cpp/">
+
+
+  <meta property="og:description" content="Connect to Walrus pressure sensors">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="canonical" href="https://docs.northernwidget.com/Walrus_Library/Files/Walrus__I2C_8cpp/">
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/Walrus_Library/feed.xml" type="application/atom+xml" rel="alternate" title="Walrus Library Feed">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/Walrus_Library/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    
+<nav class="skip-links" aria-label="Skip links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav" aria-label="Primary navigation">
+        
+        <a class="site-title" href="/Walrus_Library/">
+          Walrus Library
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a
+                href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/"
+                
+                
+              >Quick-Start Guide</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+
+
+
+<div id="main" role="main">
+  
+
+  <div class="sidebar sticky">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle Menu</label>
+  <ul class="nav__items">
+    
+      
+      
+        <li>
+          
+            <a href="/Walrus_Library/"><span class="nav__sub-title">Overview</span></a>
+          
+
+          
+        </li>
+      
+        <li>
+          
+            <a href="/Walrus_Library/Classes/classWalrus/"><span class="nav__sub-title">Walrus Class</span></a>
+          
+
+          
+        </li>
+      
+        <li>
+          
+            <a href="/Walrus_Library/Classes/index_classes/"><span class="nav__sub-title">Classes</span></a>
+          
+
+          
+        </li>
+      
+        <li>
+          
+            <a href="/Walrus_Library/Files/index_files/"><span class="nav__sub-title">Files</span></a>
+          
+
+          
+        </li>
+      
+    
+  </ul>
+</nav>
+
+    
+  
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="src/Walrus_I2C.cpp">
+    
+    
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="https://docs.northernwidget.com/Walrus_Library/Files/Walrus__I2C_8cpp/" itemprop="url">src/Walrus_I2C.cpp
+</a>
+          </h1>
+          
+
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc" aria-label="Table of contents">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#source-code">Source code</a></li></ul>
+            </nav>
+          </aside>
+        
+        <h2 id="source-code">Source code</h2>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/******************************************************************************
+Walrus.cpp
+Library for Walrus pressure and temperature sensor, made by Northern Widget LLC.
+Based off of the TP-Downhole
+Bobby Schulz @ Northern Widget LLC
+5/9/2018
+Hardware info located at:
+https://github.com/NorthernWidget-Skunkworks/Project-Walrus
+
+Distributed as-is; no warranty is given.
+******************************************************************************/</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;Wire.h&gt;</span><span class="c1"> // Wire library is used for I2C</span><span class="cp">
+#include</span> <span class="cpf">"Walrus_I2C.h"</span><span class="cp">
+</span>
+<span class="n">Walrus</span><span class="o">::</span><span class="n">Walrus</span><span class="p">()</span>
+<span class="c1">// Base library type I2C</span>
+<span class="p">{</span>
+<span class="p">}</span>
+
+
+<span class="kt">uint8_t</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">begin</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">Address_</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Wire</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="c1">//Initialize Wire instance</span>
+    <span class="n">ADR</span> <span class="o">=</span> <span class="n">Address_</span><span class="p">;</span> <span class="c1">//Copy address to local</span>
+<span class="p">}</span>
+
+<span class="c1">// float Walrus::getTemperature(uint8_t Location) //Returns temp in C from either subsensor</span>
+<span class="c1">// {</span>
+<span class="c1">//     long TempData[TEMP_OFFSET] = {0}; //Make temp data storage location</span>
+<span class="c1">//     uint8_t Offset = 0; //Default to TEMP_REG_0</span>
+<span class="c1">//     int Error = 0; //Error used for testing transmission</span>
+<span class="c1">//     if(Location == 1) Offset = 0x03;</span>
+<span class="c1">//     // Wire.beginTransmission(ADR);</span>
+<span class="c1">//     // Wire.write(TEMP_REG_0 + Offset); </span>
+<span class="c1">//     // Error = Wire.endTransmission();</span>
+
+<span class="c1">//     // Wire.requestFrom(ADR, 3); //Read 3 bytes from device</span>
+<span class="c1">//     for(int i = 0; i &lt; TEMP_OFFSET; i++) { //Increment over read</span>
+<span class="c1">//         Wire.beginTransmission(ADR);</span>
+<span class="c1">//         Wire.write(TEMP_REG_0 + Offset + i); </span>
+<span class="c1">//         Error = Wire.endTransmission();</span>
+<span class="c1">//         Wire.requestFrom((int)ADR, 1); //Cast ADR to match function</span>
+<span class="c1">//         TempData[i] = Wire.read(); //Read in data</span>
+<span class="c1">//     }</span>
+<span class="c1">//     // Serial.print("\n\n"); //DEBUG!</span>
+<span class="c1">//     // Serial.println(TEMP_REG_0 + Offset, HEX);</span>
+<span class="c1">//     // Serial.println(TempData[2], HEX);</span>
+<span class="c1">//     // Serial.println(TempData[1], HEX);</span>
+<span class="c1">//     // Serial.println(TempData[0], HEX);</span>
+<span class="c1">//     if(Error == 0) return float(long((TempData[2] &lt;&lt; 16) | (TempData[1] &lt;&lt; 8) | (TempData[0])))/1000.0; //If no error, return concatonated, scaled value</span>
+<span class="c1">//     else return -9999.0; //Else return error condition </span>
+<span class="c1">// }</span>
+
+<span class="kt">float</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getTemperature</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">Location</span><span class="p">)</span> <span class="c1">//Returns temp in C from either subsensor</span>
+<span class="p">{</span>
+    <span class="kt">uint8_t</span> <span class="n">reg</span> <span class="o">=</span> <span class="p">(</span><span class="n">Location</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">TEMP_EXT</span> <span class="o">:</span> <span class="n">TEMP_MS5803</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">Error</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">Wire</span><span class="p">.</span><span class="n">beginTransmission</span><span class="p">(</span><span class="n">ADR</span><span class="p">);</span>
+    <span class="n">Wire</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">reg</span><span class="p">);</span>
+    <span class="n">Error</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">endTransmission</span><span class="p">();</span>
+    <span class="n">Wire</span><span class="p">.</span><span class="n">requestFrom</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">ADR</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+    <span class="kt">uint8_t</span> <span class="n">lo</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">read</span><span class="p">();</span>
+    <span class="kt">uint8_t</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">read</span><span class="p">();</span>
+    <span class="kt">int16_t</span> <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int16_t</span><span class="p">)((</span><span class="kt">uint16_t</span><span class="p">)</span><span class="n">hi</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">|</span> <span class="n">lo</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">Error</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kt">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">;</span>
+    <span class="k">else</span> <span class="k">return</span> <span class="o">-</span><span class="mf">9999.0</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="kt">float</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getTemperature</span><span class="p">()</span> <span class="c1">//By default get thermistor temp value</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">getTemperature</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+
+<span class="c1">// float Walrus::getPressure()</span>
+<span class="c1">// // Return a pressure reading units mBar.</span>
+<span class="c1">// {</span>
+<span class="c1">//     long TempData[3] = {0}; //Make temp data storage location</span>
+<span class="c1">//     int Error = 0; //Error used for testing transmission</span>
+<span class="c1">//     // Wire.beginTransmission(ADR);  //Command for data</span>
+<span class="c1">//     // Wire.write(PRES_REG); </span>
+<span class="c1">//     // Error = Wire.endTransmission();</span>
+
+<span class="c1">//     for(int i = 0; i &lt; 3; i++) { //Increment over read</span>
+<span class="c1">//         Wire.beginTransmission(ADR);</span>
+<span class="c1">//         Wire.write(PRES_REG + i); </span>
+<span class="c1">//         Error = Wire.endTransmission();</span>
+<span class="c1">//         Wire.requestFrom((int)ADR, 1); //Cast ADR to match function</span>
+<span class="c1">//         TempData[i] = Wire.read(); //Read in data</span>
+<span class="c1">//     }</span>
+
+<span class="c1">//     if(Error == 0) return float(long((TempData[2] &lt;&lt; 16) | (TempData[1] &lt;&lt; 8) | (TempData[0])))/1000.0; //If no error, return concatonated, scaled value</span>
+<span class="c1">//     else return -9999.0; //Else return error condition </span>
+<span class="c1">// }</span>
+
+<span class="kt">float</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getPressure</span><span class="p">()</span>
+<span class="c1">// Return a pressure reading units mBar.</span>
+<span class="p">{</span>
+    <span class="kt">long</span> <span class="n">TempData</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span> <span class="c1">//Make temp data storage location</span>
+    <span class="kt">int</span> <span class="n">Error</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">//Error used for testing transmission</span>
+    <span class="c1">// Wire.beginTransmission(ADR);  //Command for data</span>
+    <span class="c1">// Wire.write(PRES_REG);</span>
+    <span class="c1">// Error = Wire.endTransmission();</span>
+
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//Increment over read</span>
+        <span class="n">Wire</span><span class="p">.</span><span class="n">beginTransmission</span><span class="p">(</span><span class="n">ADR</span><span class="p">);</span>
+        <span class="n">Wire</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">PRES_REG</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>
+        <span class="n">Error</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">endTransmission</span><span class="p">();</span>
+        <span class="n">Wire</span><span class="p">.</span><span class="n">requestFrom</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">ADR</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">//Cast ADR to match function</span>
+        <span class="n">TempData</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">read</span><span class="p">();</span> <span class="c1">//Read in data</span>
+    <span class="p">}</span>
+
+    <span class="kt">long</span> <span class="n">PresVal</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">PresVal</span> <span class="o">=</span> <span class="n">PresVal</span> <span class="o">|</span> <span class="p">(</span><span class="n">TempData</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="o">*</span><span class="n">i</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">Error</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kt">float</span><span class="p">(</span><span class="n">PresVal</span><span class="p">)</span><span class="o">/</span><span class="mf">1000.0</span><span class="p">;</span> <span class="c1">//If no error, return concatonated, scaled value</span>
+    <span class="k">else</span> <span class="k">return</span> <span class="o">-</span><span class="mf">9999.0</span><span class="p">;</span> <span class="c1">//Else return error condition </span>
+<span class="p">}</span>
+
+<span class="kt">bool</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">newData</span><span class="p">()</span>  <span class="c1">// Checks for updated/valid data</span>
+<span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">timeout</span> <span class="o">=</span> <span class="n">millis</span><span class="p">();</span> <span class="c1">// Get timeout value</span>
+    <span class="n">Wire</span><span class="p">.</span><span class="n">beginTransmission</span><span class="p">(</span><span class="n">ADR</span><span class="p">);</span>
+    <span class="n">Wire</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x20</span><span class="p">);</span> <span class="c1">//Schema 1 Page 1 status byte</span>
+    <span class="n">Wire</span><span class="p">.</span><span class="n">endTransmission</span><span class="p">();</span>
+    <span class="n">Wire</span><span class="p">.</span><span class="n">requestFrom</span><span class="p">(</span><span class="n">ADR</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">Wire</span><span class="p">.</span><span class="n">available</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">millis</span><span class="p">()</span> <span class="o">-</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="n">timeoutGlobal</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">delay</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="kt">uint8_t</span> <span class="n">val</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">read</span><span class="p">();</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x01</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">String</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getHeader</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="s">"Pressure [mBar],Temp DH [C],Temp DHt [C],"</span><span class="p">;</span> <span class="c1">//return header string</span>
+<span class="p">}</span>
+
+<span class="n">String</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getString</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">timeout</span> <span class="o">=</span> <span class="n">millis</span><span class="p">();</span> <span class="c1">//Get timeout value</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">newData</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">millis</span><span class="p">()</span> <span class="o">-</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="n">timeoutGlobal</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">delay</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">newData</span><span class="p">())</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="n">String</span><span class="p">(</span><span class="n">getPressure</span><span class="p">())</span> <span class="o">+</span> <span class="s">","</span> <span class="o">+</span> <span class="n">String</span><span class="p">(</span><span class="n">getTemperature</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">+</span> <span class="s">","</span> \
+                                   <span class="o">+</span> <span class="n">String</span><span class="p">(</span><span class="n">getTemperature</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="s">","</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">return</span> <span class="s">"-9999.0,-9999.0,-9999.0,"</span><span class="p">;</span> <span class="c1">//Return failure state //FIX hardcode??</span>
+    <span class="c1">//Return data string</span>
+
+<span class="p">}</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>Updated on 2026-09-22 at 23:10:14 +0000</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+  
+
+  
+
+
+        
+
+
+
+      </footer>
+
+      
+
+      
+
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+      
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        
+
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/Walrus_Library/feed.xml"><i class="fas fa-fw fa-square-rss" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+
+<div class="page__footer-copyright">&copy; 2026 <a href="https://docs.northernwidget.com">Walrus Library</a>. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+
+  <script src="/Walrus_Library/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

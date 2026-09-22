@@ -1,0 +1,441 @@
+
+
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.28.1 by Michael Rose
+  Copyright 2013-2026 Michael Rose - mademistakes.com | @mmistakes
+  Copyright 2024-2026 iBug - ibugone.com | @iBug
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+
+<html lang="en" class="no-js" dir="ltr">
+  <head>
+    
+<meta charset="utf-8">
+
+
+<!-- begin _includes/seo.html --><title>src/Walrus_I2C.h - Walrus Library</title>
+<meta name="description" content="Connect to Walrus pressure sensors">
+
+
+  <meta name="author" content="Northern Widget">
+  
+
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="Walrus Library">
+<meta property="og:title" content="src/Walrus_I2C.h">
+<meta property="og:url" content="https://docs.northernwidget.com/Walrus_Library/Files/Walrus__I2C_8h/">
+
+
+  <meta property="og:description" content="Connect to Walrus pressure sensors">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="canonical" href="https://docs.northernwidget.com/Walrus_Library/Files/Walrus__I2C_8h/">
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/Walrus_Library/feed.xml" type="application/atom+xml" rel="alternate" title="Walrus Library Feed">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+  
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/Walrus_Library/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--single">
+    
+<nav class="skip-links" aria-label="Skip links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    
+
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav" aria-label="Primary navigation">
+        
+        <a class="site-title" href="/Walrus_Library/">
+          Walrus Library
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a
+                href="https://mmistakes.github.io/minimal-mistakes/docs/quick-start-guide/"
+                
+                
+              >Quick-Start Guide</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+
+
+
+
+
+
+
+<div id="main" role="main">
+  
+
+  <div class="sidebar sticky">
+  
+  
+    
+      
+      
+      
+      
+    
+    
+      
+<nav class="nav__list">
+  
+  <input id="ac-toc" name="accordion-toc" type="checkbox" />
+  <label for="ac-toc">Toggle Menu</label>
+  <ul class="nav__items">
+    
+      
+      
+        <li>
+          
+            <a href="/Walrus_Library/"><span class="nav__sub-title">Overview</span></a>
+          
+
+          
+        </li>
+      
+        <li>
+          
+            <a href="/Walrus_Library/Classes/classWalrus/"><span class="nav__sub-title">Walrus Class</span></a>
+          
+
+          
+        </li>
+      
+        <li>
+          
+            <a href="/Walrus_Library/Classes/index_classes/"><span class="nav__sub-title">Classes</span></a>
+          
+
+          
+        </li>
+      
+        <li>
+          
+            <a href="/Walrus_Library/Files/index_files/"><span class="nav__sub-title">Files</span></a>
+          
+
+          
+        </li>
+      
+    
+  </ul>
+</nav>
+
+    
+  
+  
+  </div>
+
+
+
+  <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork">
+    <meta itemprop="headline" content="src/Walrus_I2C.h">
+    
+    
+    
+
+    <div class="page__inner-wrap">
+      
+        <header>
+          <h1 id="page-title" class="page__title p-name" itemprop="headline">
+            <a href="https://docs.northernwidget.com/Walrus_Library/Files/Walrus__I2C_8h/" itemprop="url">src/Walrus_I2C.h
+</a>
+          </h1>
+          
+
+
+
+        </header>
+      
+
+      <section class="page__content e-content" itemprop="text">
+        
+          <aside class="sidebar__right sticky">
+            <nav class="toc" aria-label="Table of contents">
+              <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
+              <ul class="toc__menu"><li><a href="#classes">Classes</a></li><li><a href="#defines">Defines</a></li><li><a href="#macros-documentation">Macros Documentation</a><ul><li><a href="#define-pres_reg">define PRES_REG</a></li><li><a href="#define-temp_ms5803">define TEMP_MS5803</a></li><li><a href="#define-temp_ext">define TEMP_EXT</a></li><li><a href="#define-adr_default">define ADR_DEFAULT</a></li></ul></li><li><a href="#source-code">Source code</a></li></ul>
+            </nav>
+          </aside>
+        
+        <h2 id="classes">Classes</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>class</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/">Walrus</a></strong> <br />Class to interface with the <a href="">Walrus</a> submersible temperature and pressure sensor.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="defines">Defines</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td><strong><a href="/Walrus_Library/Files/Walrus__I2C_8h/#define-pres-reg">PRES_REG</a></strong></td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td><strong><a href="/Walrus_Library/Files/Walrus__I2C_8h/#define-temp-ms5803">TEMP_MS5803</a></strong></td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td><strong><a href="/Walrus_Library/Files/Walrus__I2C_8h/#define-temp-ext">TEMP_EXT</a></strong></td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td><strong><a href="/Walrus_Library/Files/Walrus__I2C_8h/#define-adr-default">ADR_DEFAULT</a></strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="macros-documentation">Macros Documentation</h2>
+
+<h3 id="define-pres_reg">define PRES_REG</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define PRES_REG 0x28
+</span></code></pre></div></div>
+
+<h3 id="define-temp_ms5803">define TEMP_MS5803</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define TEMP_MS5803 0x2C
+</span></code></pre></div></div>
+
+<h3 id="define-temp_ext">define TEMP_EXT</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define TEMP_EXT 0x30
+</span></code></pre></div></div>
+
+<h3 id="define-adr_default">define ADR_DEFAULT</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define ADR_DEFAULT Walrus::DEFAULT_ADDRESS
+</span></code></pre></div></div>
+
+<p><strong>Deprecated</strong>:</p>
+
+<p>Use <a href="/Walrus_Library/Classes/classWalrus/#variable-default-address">Walrus::DEFAULT_ADDRESS</a>. Every NW library defined this same macro with a different value, so a sketch including two of them got the last one. Removed at the next major version.</p>
+
+<h2 id="source-code">Source code</h2>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/******************************************************************************
+Walrus.cpp
+Library for Walrus pressure and temperature sensor, made by Northern Widget LLC.
+Based off of the TP-Downhole
+Bobby Schulz @ Northern Widget LLC
+5/9/2018
+Hardware info located at:
+https://github.com/NorthernWidget-Skunkworks/Project-Walrus
+
+Distributed as-is; no warranty is given.
+******************************************************************************/</span>
+
+<span class="cp">#ifndef Walrus_I2C_h
+#define Walrus_I2C_h
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;Arduino.h&gt;</span><span class="cp">
+</span>
+<span class="cp">#define PRES_REG    0x28  // Schema 1 Page 1 Block 1: pressure, int32, µBar
+#define TEMP_MS5803 0x2C  // Schema 1 Page 1 Block 1: MS5803 temperature, int16, 0.01 °C
+#define TEMP_EXT    0x30  // Schema 1 Page 1 Block 2: external temperature (MCP9808), int16, 0.01 °C
+</span>
+
+<span class="k">class</span> <span class="nc">Walrus</span>
+<span class="p">{</span>
+    <span class="nl">public:</span>
+        <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">uint8_t</span> <span class="n">DEFAULT_ADDRESS</span> <span class="o">=</span> <span class="mh">0x57</span><span class="p">;</span>
+
+
+        <span class="n">Walrus</span><span class="p">();</span>  <span class="c1">// Constructor</span>
+
+        <span class="kt">uint8_t</span> <span class="n">begin</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">Address_</span> <span class="o">=</span> <span class="n">DEFAULT_ADDRESS</span><span class="p">);</span>
+
+        <span class="kt">float</span> <span class="n">getTemperature</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">Location</span><span class="p">);</span>
+
+        <span class="kt">float</span> <span class="n">getTemperature</span><span class="p">();</span>
+
+        <span class="kt">float</span> <span class="n">getPressure</span><span class="p">();</span>
+
+        <span class="n">String</span> <span class="n">getHeader</span><span class="p">();</span>
+
+        <span class="n">String</span> <span class="n">getString</span><span class="p">();</span>
+
+        <span class="kt">bool</span> <span class="n">newData</span><span class="p">();</span>
+
+    <span class="nl">private:</span>
+        <span class="kt">uint8_t</span> <span class="n">ADR</span> <span class="o">=</span> <span class="n">DEFAULT_ADDRESS</span><span class="p">;</span> <span class="c1">//Default address</span>
+        <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">timeoutGlobal</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span> <span class="c1">//Timeout value, ms //FIX??</span>
+<span class="p">};</span>
+
+<span class="cp">#define ADR_DEFAULT Walrus::DEFAULT_ADDRESS
+</span>
+<span class="cp">#endif
+</span></code></pre></div></div>
+
+<hr />
+
+<p>Updated on 2026-09-22 at 23:10:14 +0000</p>
+
+        
+      </section>
+
+      <footer class="page__meta">
+        
+        
+
+  
+
+  
+
+
+        
+
+
+
+      </footer>
+
+      
+
+      
+
+
+    </div>
+
+    
+  </article>
+
+  
+  
+</div>
+
+      
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        
+
+
+<div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/Walrus_Library/feed.xml"><i class="fas fa-fw fa-square-rss" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+
+<div class="page__footer-copyright">&copy; 2026 <a href="https://docs.northernwidget.com">Walrus Library</a>. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/jekyll-themes/minimal-mistakes/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+
+  <script src="/Walrus_Library/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>
