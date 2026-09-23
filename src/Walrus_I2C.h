@@ -20,6 +20,16 @@ Distributed as-is; no warranty is given.
 /// brought the Block 0 handshake (trigger, reading counter, faults).
 #define WALRUS_FW_MIN_PATCH 1
 
+// Readings per updateMeasurements() are kept in static arrays of this
+// capacity (one per chip group; no heap); set<Field>Readings(n) clamps to it.
+// Override before the include to trade RAM for a longer batch.
+#ifndef WALRUS_PRESSURE_CAPACITY
+  #define WALRUS_PRESSURE_CAPACITY 16   // MS5803: pressure and its temperature
+#endif
+#ifndef WALRUS_TEMPERATURE_CAPACITY
+  #define WALRUS_TEMPERATURE_CAPACITY 16   // MCP9808: external temperature
+#endif
+
 #define PRES_REG    0x28  // Schema 1 Page 1 Block 1: pressure, int32, µBar
 #define TEMP_MS5803 0x2C  // Schema 1 Page 1 Block 1: MS5803 temperature, int16, 0.01 °C
 #define TEMP_EXT    0x30  // Schema 1 Page 1 Block 2: external temperature (MCP9808), int16, 0.01 °C
@@ -39,6 +49,12 @@ class Walrus
     public:
         /** @brief Default I2C address: NW-Device-Specification Schema 1 'W' (0x57). */
         static constexpr uint8_t DEFAULT_ADDRESS = 0x57;
+        /** @brief Chip groups a reading can cover (the spec's chip table: 0 MS5803, 1 MCP9808). */
+        enum Component : uint8_t {
+            MS5803  = 0x01,  ///< pressure and the MS5803's own temperature
+            MCP9808 = 0x02,  ///< external (water) temperature
+            ALL     = 0x03
+        };
         /**
          * @brief Instantiate Walrus object
          */
@@ -54,14 +70,38 @@ class Walrus
          */
         bool begin(uint8_t Address_ = DEFAULT_ADDRESS);
         /**
-         * @brief Take one reading of both chips and store it for the getters.
-         * @details Triggers the device, waits for its reading counter to
-         * advance, then reads pressure and both temperatures in one
-         * transaction. A chip the device reports faulted leaves its values
-         * at NW_ERROR (-9999).
-         * @return true if the device answered and no chip faulted
+         * @brief Take the configured number of readings of the selected chips
+         * and store them for the getters and the statistics.
+         * @details Each reading triggers the device and waits for its reading
+         * counter to advance (NW-Device-Specification handshake); N > 1 is
+         * declared to the device as a batch first. The single-value getters
+         * return the mean of the readings taken; a chip the device reports
+         * faulted leaves its values at NW_ERROR (-9999). With one reading of
+         * ALL, both chips are read in a single transaction.
+         * @param component Walrus::ALL (default), Walrus::MS5803 or Walrus::MCP9808.
+         * @return true if every selected chip gave at least one valid reading
          */
-        bool updateMeasurements();
+        bool updateMeasurements(uint8_t component = ALL);
+        /** @brief Take ONE reading of the MS5803 (pressure and its temperature) and append it to the readings. */
+        bool updatePressure();
+        /** @brief Take ONE reading of the MCP9808 (external temperature) and append it to the readings. */
+        bool updateTemperature();
+        /**
+         * @brief Set how many MS5803 readings updateMeasurements() takes
+         * (statistics are computed over them). Clamped to WALRUS_PRESSURE_CAPACITY.
+         * @return The number actually set.
+         */
+        uint16_t setPressureReadings(uint16_t n);
+        /** @brief Set how many MCP9808 readings updateMeasurements() takes. Clamped to WALRUS_TEMPERATURE_CAPACITY. */
+        uint16_t setTemperatureReadings(uint16_t n);
+        /** @brief Enable or disable pressure and MS5803-temperature std and sterr columns in getString()/getHeader(). */
+        void setPressureStats(bool enable);
+        /** @brief Enable or disable external-temperature std and sterr columns in getString()/getHeader(). */
+        void setTemperatureStats(bool enable);
+        /** @brief Number of valid MS5803 readings stored by the last updateMeasurements(). */
+        uint16_t getPressureCount();
+        /** @brief Number of valid MCP9808 readings stored by the last updateMeasurements(). */
+        uint16_t getTemperatureCount();
         /**
          * @brief Return calculated temperature from Walrus.
          * @details This calculated temperature can be from either
@@ -81,20 +121,81 @@ class Walrus
         /**
          * @brief Return calculated pressure from sensor [mBar].
          * @details This is the MS5803 sensor, which can come in a variety
-         * of different pressure ranges and sensitivities.
+         * of different pressure ranges and sensitivities. The mean of the
+         * readings stored by the last updateMeasurements().
          */
         float getPressure();
+
+        // --- Statistics getters ---
+        // Computed two-pass in 32-bit float over the readings stored by the last
+        // updateMeasurements() (NW_Readings). Adequate for N up to the array
+        // capacities; at N in the thousands the sum of squared deviations would
+        // want double precision, which the AVR lacks.
+        /** @brief Pressure mean [mBar] over the stored readings (NW_ERROR when none). */
+        float getPressureMean();
+        /** @brief Pressure standard deviation [mBar]. */
+        float getPressureStd();
+        /** @brief Pressure standard error [mBar]. */
+        float getPressureSterr();
+        /** @brief Pressure median [mBar] (mean of the middle pair for even N). */
+        float getPressureMedian();
+        /** @brief Temperature mean [C] over the stored readings; Location 0 = MCP9808, 1 = MS5803. */
+        float getTemperatureMean(uint8_t Location);
+        /** @brief Temperature standard deviation [C]; Location as getTemperature(). */
+        float getTemperatureStd(uint8_t Location);
+        /** @brief Temperature standard error [C]; Location as getTemperature(). */
+        float getTemperatureSterr(uint8_t Location);
+        /** @brief Temperature median [C]; Location as getTemperature(). */
+        float getTemperatureMedian(uint8_t Location);
         /**
          * @brief Return header
-         * @details "Pressure [mBar],Temp DH [C],Temp DHt [C],"
+         * @details "Pressure [mBar],Temp DH [C],Temp DHt [C]," with std and
+         * sterr columns after a value when its statistics are enabled and
+         * more than one reading is configured.
          */
         String getHeader();
         /**
          * @brief Take a reading (updateMeasurements()) and return it as a string
          * @details String(getPressure()) + "," + String(getTemperature(0))
-         + "," + String(getTemperature(1)) + ",";
+         + "," + String(getTemperature(1)) + ","; statistics columns as
+         * getHeader() describes.
          */
         String getString();
+
+        // --- Reading interface (NW standard) ---
+        /**
+         * @brief Print the header matching printReading(): column names with
+         * units, each followed by a comma, for the chips selected by
+         * beginReadings(). No statistics columns: one reading has none.
+         * @param out Any Print destination (SdFat File, Serial, ...).
+         * @return Bytes written.
+         */
+        size_t printHeader(Print& out);
+        /**
+         * @brief Print the stored reading of the selected chips, each value
+         * followed by a comma. Does not acquire: call updateMeasurements()
+         * first, or use logReading(). Writes: pressure [mBar], MS5803
+         * temperature [C] for MS5803; external temperature [C] for MCP9808.
+         * @return Bytes written.
+         */
+        size_t printReading(Print& out);
+        /**
+         * @brief Take ONE reading of the selected chips and print it: the
+         * one-reading primitive for collecting many readings to a file.
+         * @return Bytes written.
+         */
+        size_t logReading(Print& out);
+        /**
+         * @brief Begin a run of readings, selecting which chips they cover.
+         * @param component Walrus::ALL, Walrus::MS5803 or Walrus::MCP9808.
+         * @param n How many readings the run will take (the number of
+         * logReading() calls to follow); with n > 1 the device is told in
+         * advance (readings-requested word). Nothing on Walrus is powered per
+         * batch, so the word only satisfies the protocol.
+         */
+        void beginReadings(uint8_t component = ALL, uint16_t n = 0);
+        /** @brief End a run of readings. */
+        void endReadings();
         /**
         * @brief Checks for updated data. Returns `true` if the device's ready
         * bit is set; otherwise returns `false`.
@@ -130,9 +231,22 @@ class Walrus
         uint8_t getFirmwareVersion();
     private:
         NW_Device _dev;
-        float _pressure = NW_ERROR;   //Stored by updateMeasurements() [mBar]
+        float _pressure = NW_ERROR;   //Mean of the last updateMeasurements() [mBar]
         float _tempExt = NW_ERROR;    //MCP9808 [C]
         float _tempMS5803 = NW_ERROR; //MS5803 [C]
+        // Readings as the device serves them (raw register units), one array per
+        // field; statistics come from these and are scaled on the way out.
+        NW_Readings<int32_t, WALRUS_PRESSURE_CAPACITY>    _pressureReadings;   //uBar
+        NW_Readings<int16_t, WALRUS_PRESSURE_CAPACITY>    _tempMS5803Readings; //0.01 C
+        NW_Readings<int16_t, WALRUS_TEMPERATURE_CAPACITY> _tempExtReadings;    //0.01 C
+        uint16_t _nPressureReadings = 1;
+        uint16_t _nTemperatureReadings = 1;
+        bool _pressureStats = false;
+        bool _temperatureStats = false;
+        uint8_t _component = ALL;     //Selection of the current beginReadings() run
+        bool readMS5803(uint8_t* d);  //Append one served MS5803 reading (6 bytes from 0x28) unless faulted
+        bool readMCP9808(uint8_t* d); //Append one served MCP9808 reading (2 bytes from 0x30) unless faulted
+        void summarise(uint8_t component); //Means into the single-value fields, NW_ERROR when no reading
 };
 
 /** @deprecated Use Walrus::DEFAULT_ADDRESS. Every NW library defined this same macro

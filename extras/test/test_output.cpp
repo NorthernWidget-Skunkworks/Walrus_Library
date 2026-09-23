@@ -34,8 +34,11 @@ static void loadImage(int32_t pressure, int16_t tMS5803, int16_t tExt, uint8_t f
 // completes a reading at once (counter +1, ready set, trigger and sleep bits
 // cleared, fault byte cleared). A per-test hook can vary the data.
 static std::function<void(TwoWire&)> onReading;
+static uint16_t lastRequest = 0;   // readings-requested word as the stub firmware saw it
 static void installFirmwareEmulation() {
   Wire.onWrite = [](TwoWire& w, uint8_t reg, uint8_t val) {
+    if (reg == 0x24) lastRequest = (lastRequest & 0xFF00) | val;
+    if (reg == 0x25) lastRequest = (lastRequest & 0x00FF) | (val << 8);
     if (reg != 0x21) return;
     w.image[0x27] = 0;
     if (!(val & 0x01)) return;
@@ -115,6 +118,52 @@ int main() {
     bool req = s.requestReading(); bool nr = s.newReading(); bool rd = s.ready();
     printf("[handshake] requestReading=%d newReading=%d ready=%d\n", req, nr, rd);
     s.getString(); printf("[cost] requestFrom calls for one getString(): %u\n", Wire.transactions - t0 - 2); }
+
+  // 8. N readings with statistics: pressure steps through five values, the MCP9808
+  //    through three; the batch word reaches the device; getString() grows its columns.
+  loadImage(1013250, 2137, 405);
+  { Walrus s; s.begin(); int k = 0;
+    onReading = [&](TwoWire& w) { k++;
+      int32_t p = 1013000 + 100 * (k % 5); for (int i = 0; i < 4; i++) w.image[0x28 + i] = (p >> (8 * i)) & 0xFF;
+      int16_t t = 400 + 10 * (k % 3); w.image[0x30] = t & 0xFF; w.image[0x31] = (t >> 8) & 0xFF; };
+    printf("[N] setPressureReadings(5)=%u setTemperatureReadings(3)=%u setPressureReadings(99)=%u\n",
+           s.setPressureReadings(5), s.setTemperatureReadings(3), s.setPressureReadings(99));
+    s.setPressureReadings(5); s.setPressureStats(true); s.setTemperatureStats(true);
+    lastRequest = 0; unsigned t0 = Wire.transactions; bool ok = s.updateMeasurements();
+    printf("[N=5,3] update=%d pressureCount=%u temperatureCount=%u lastRequest=%u requestFrom=%u\n",
+           ok, s.getPressureCount(), s.getTemperatureCount(), lastRequest, Wire.transactions - t0);
+    printf("[N=5,3] pressure mean=%.4f std=%.4f sterr=%.4f median=%.4f | tExt mean=%.4f std=%.4f median=%.4f | tMS5803 mean=%.4f std=%.4f\n",
+           s.getPressureMean(), s.getPressureStd(), s.getPressureSterr(), s.getPressureMedian(),
+           s.getTemperatureMean(0), s.getTemperatureStd(0), s.getTemperatureMedian(0), s.getTemperatureMean(1), s.getTemperatureStd(1));
+    printf("[N=5,3] header: %s\n", s.getHeader().c_str());
+    printf("[N=5,3] string: %s\n", s.getString().c_str());
+    // One chip group only: the MCP9808 readings are left untouched by an MS5803 update.
+    ok = s.updateMeasurements(Walrus::MS5803);
+    printf("[MS5803 only] update=%d pressureCount=%u temperatureCount=%u tExt=%.4f\n", ok, s.getPressureCount(), s.getTemperatureCount(), s.getTemperature(0));
+    onReading = nullptr; }
+
+  // 9. Reading interface: header, three logged readings of ALL, then MCP9808 alone; the
+  //    batch word for the run reaches the device.
+  loadImage(1013250, 2137, 405);
+  { Walrus s; s.begin(); int k = 0; char pb[96];
+    onReading = [&](TwoWire& w) { k++; int32_t p = 1013000 + 50 * k; for (int i = 0; i < 4; i++) w.image[0x28 + i] = (p >> (8 * i)) & 0xFF; };
+    lastRequest = 0; s.beginReadings(Walrus::ALL, 3);
+    BufferPrint bh(pb, sizeof pb); s.printHeader(bh); printf("[run ALL] header: %s lastRequest=%u\n", pb, lastRequest);
+    for (int i = 0; i < 3; i++) { BufferPrint bp(pb, sizeof pb); size_t n = s.logReading(bp); printf("[run ALL] row %d (%zu bytes): %s\n", i, n, pb); }
+    s.endReadings();
+    printf("[run ALL] pressure count=%u mean=%.4f median=%.4f\n", s.getPressureCount(), s.getPressureMean(), s.getPressureMedian());
+    s.beginReadings(Walrus::MCP9808);
+    BufferPrint bh2(pb, sizeof pb); s.printHeader(bh2); printf("[run MCP9808] header: %s\n", pb);
+    BufferPrint bp2(pb, sizeof pb); s.logReading(bp2); s.endReadings(); printf("[run MCP9808] row: %s\n", pb);
+    onReading = nullptr; }
+
+  // 10. A dead MS5803 (no acknowledge on the first reading) stops its batch of 10.
+  loadImage(1013250, 2137, 405);
+  { Walrus s; s.begin(); int k = 0;
+    onReading = [&](TwoWire& w) { k++; w.image[0x20] = 0x83; w.image[0x27] = 0x01; };
+    s.setPressureReadings(10); bool ok = s.updateMeasurements(Walrus::MS5803);
+    printf("[dead MS5803] N=10: update=%d readings taken=%d pressureCount=%u pressure=%.2f note='%s'\n", ok, k, s.getPressureCount(), s.getPressure(), s.faultNote().c_str());
+    onReading = nullptr; }
 
   fprintf(stderr, "bus transactions total: %u\n", Wire.transactions);   // metric, not output
   return 0;

@@ -23,23 +23,113 @@ bool Walrus::begin(uint8_t Address_)
     return _dev.begin(Address_, "Walrus", WALRUS_FW_MIN_PATCH);
 }
 
-bool Walrus::updateMeasurements()
+bool Walrus::updateMeasurements(uint8_t component)
 {
-    _pressure = _tempExt = _tempMS5803 = NW_ERROR;
-    if(!_dev.takeReading(0x03)) return false;       //both chips: bit 0 MS5803, bit 1 MCP9808
-    //Block 1 and Block 2 are consecutive (0x28-0x31): one read.
-    uint8_t d[10];
-    if(!_dev.readBytes(NW_REG_DATA, d, 10)) return false;
-    if(!_dev.faulted(0)) {                          //MS5803: pressure int32 uBar, temperature int16 0.01 C
-        int32_t p = (int32_t)((uint32_t)d[0] | ((uint32_t)d[1] << 8) | ((uint32_t)d[2] << 16) | ((uint32_t)d[3] << 24));
-        _pressure = float(p) / 1000.0;              //uBar -> mBar
-        _tempMS5803 = float((int16_t)(d[4] | (d[5] << 8))) / 100.0;
+    bool doMS = component & MS5803, doMCP = component & MCP9808;
+    if(doMS) { _pressureReadings.reset(); _tempMS5803Readings.reset(); }
+    if(doMCP) _tempExtReadings.reset();
+    if(doMS && doMCP && _nPressureReadings <= 1 && _nTemperatureReadings <= 1) {
+        //One reading of everything: both chips in one trigger, one 10-byte read.
+        _dev.resetBatch();
+        uint8_t d[10];
+        if(_dev.takeReading(ALL) && _dev.readBytes(NW_REG_DATA, d, 10)) {
+            readMS5803(d);
+            readMCP9808(d + 8);
+        }
     }
-    if(!_dev.faulted(1)) {                          //MCP9808: external temperature int16 0.01 C
-        _tempExt = float((int16_t)(d[8] | (d[9] << 8))) / 100.0;
+    else {
+        //Per chip group: N readings each, appended to the arrays; a chip that
+        //reports absent (no acknowledge / not initialised) stops its batch.
+        if(doMS) {
+            _dev.beginBatch(_nPressureReadings);
+            for(uint16_t i = 0; i < _nPressureReadings; i++) {
+                if(!updatePressure() && _dev.batchFaulted(MS5803)) break;
+            }
+        }
+        if(doMCP) {
+            _dev.beginBatch(_nTemperatureReadings);
+            for(uint16_t i = 0; i < _nTemperatureReadings; i++) {
+                if(!updateTemperature() && _dev.batchFaulted(MCP9808)) break;
+            }
+        }
     }
-    return !_dev.anyFault();
+    summarise(component);
+    bool ok = true;
+    if(doMS) ok = ok && _pressureReadings.count() > 0;
+    if(doMCP) ok = ok && _tempExtReadings.count() > 0;
+    return ok;
 }
+
+bool Walrus::updatePressure()
+{
+    uint8_t d[6];
+    if(!_dev.takeReading(MS5803) || !_dev.readBytes(PRES_REG, d, 6)) return false;
+    return readMS5803(d);
+}
+
+bool Walrus::updateTemperature()
+{
+    uint8_t d[2];
+    if(!_dev.takeReading(MCP9808) || !_dev.readBytes(TEMP_EXT, d, 2)) return false;
+    return readMCP9808(d);
+}
+
+bool Walrus::readMS5803(uint8_t* d)
+{
+    if(_dev.faulted(0)) return false;           //MS5803: pressure int32 uBar, temperature int16 0.01 C
+    int32_t p = (int32_t)((uint32_t)d[0] | ((uint32_t)d[1] << 8) | ((uint32_t)d[2] << 16) | ((uint32_t)d[3] << 24));
+    _pressureReadings.append(p);
+    _tempMS5803Readings.append((int16_t)(d[4] | (d[5] << 8)));
+    return true;
+}
+
+bool Walrus::readMCP9808(uint8_t* d)
+{
+    if(_dev.faulted(1)) return false;           //MCP9808: external temperature int16 0.01 C
+    _tempExtReadings.append((int16_t)(d[0] | (d[1] << 8)));
+    return true;
+}
+
+void Walrus::summarise(uint8_t component)
+{
+    //Means over the readings taken, scaled from the register units; NW_ERROR when none.
+    if(component & MS5803) {
+        _pressure   = _pressureReadings.count()   ? _pressureReadings.mean() / 1000.0   : NW_ERROR;
+        _tempMS5803 = _tempMS5803Readings.count() ? _tempMS5803Readings.mean() / 100.0  : NW_ERROR;
+    }
+    if(component & MCP9808) {
+        _tempExt = _tempExtReadings.count() ? _tempExtReadings.mean() / 100.0 : NW_ERROR;
+    }
+}
+
+uint16_t Walrus::setPressureReadings(uint16_t n)
+{
+    _nPressureReadings = (n > WALRUS_PRESSURE_CAPACITY) ? WALRUS_PRESSURE_CAPACITY : n;
+    return _nPressureReadings;
+}
+
+uint16_t Walrus::setTemperatureReadings(uint16_t n)
+{
+    _nTemperatureReadings = (n > WALRUS_TEMPERATURE_CAPACITY) ? WALRUS_TEMPERATURE_CAPACITY : n;
+    return _nTemperatureReadings;
+}
+
+void     Walrus::setPressureStats(bool enable)    { _pressureStats = enable; }
+void     Walrus::setTemperatureStats(bool enable) { _temperatureStats = enable; }
+uint16_t Walrus::getPressureCount()               { return _pressureReadings.count(); }
+uint16_t Walrus::getTemperatureCount()            { return _tempExtReadings.count(); }
+
+//Statistics are computed from the arrays each call (NW_Readings), in the
+//register units, then scaled: uBar -> mBar, 0.01 C -> C. NW_ERROR when empty.
+static float scaled(float v, float divisor) { return (v == NW_ERROR) ? NW_ERROR : v / divisor; }
+float Walrus::getPressureMean()   { return scaled(_pressureReadings.mean(),   1000.0); }
+float Walrus::getPressureStd()    { return scaled(_pressureReadings.std(),    1000.0); }
+float Walrus::getPressureSterr()  { return scaled(_pressureReadings.sterr(),  1000.0); }
+float Walrus::getPressureMedian() { return scaled(_pressureReadings.median(), 1000.0); }
+float Walrus::getTemperatureMean(uint8_t Location)   { return scaled(Location == 0 ? _tempExtReadings.mean()   : _tempMS5803Readings.mean(),   100.0); }
+float Walrus::getTemperatureStd(uint8_t Location)    { return scaled(Location == 0 ? _tempExtReadings.std()    : _tempMS5803Readings.std(),    100.0); }
+float Walrus::getTemperatureSterr(uint8_t Location)  { return scaled(Location == 0 ? _tempExtReadings.sterr()  : _tempMS5803Readings.sterr(),  100.0); }
+float Walrus::getTemperatureMedian(uint8_t Location) { return scaled(Location == 0 ? _tempExtReadings.median() : _tempMS5803Readings.median(), 100.0); }
 
 float Walrus::getTemperature(uint8_t Location) //Returns temp in C from either subsensor
 {
@@ -102,12 +192,74 @@ String Walrus::faultNote()
 
 String Walrus::getHeader()
 {
-    return "Pressure [mBar],Temp DH [C],Temp DHt [C],"; //return header string
+    String h = "Pressure [mBar],"; //return header string
+    if(_pressureStats && _nPressureReadings > 1) h += "Pressure std [mBar],Pressure sterr [mBar],";
+    h += "Temp DH [C],";
+    if(_temperatureStats && _nTemperatureReadings > 1) h += "Temp DH std [C],Temp DH sterr [C],";
+    h += "Temp DHt [C],";
+    if(_pressureStats && _nPressureReadings > 1) h += "Temp DHt std [C],Temp DHt sterr [C],";
+    return h;
 }
 
 String Walrus::getString()
 {
     updateMeasurements();                           //NW_ERROR (-9999) where a reading failed
-    return String(getPressure()) + "," + String(getTemperature(0)) + "," \
-                                 + String(getTemperature(1)) + ",";
+    String s = String(getPressure()) + ",";
+    if(_pressureStats && _nPressureReadings > 1) s += String(getPressureStd()) + "," + String(getPressureSterr()) + ",";
+    s += String(getTemperature(0)) + ",";
+    if(_temperatureStats && _nTemperatureReadings > 1) s += String(getTemperatureStd(0)) + "," + String(getTemperatureSterr(0)) + ",";
+    s += String(getTemperature(1)) + ",";
+    if(_pressureStats && _nPressureReadings > 1) s += String(getTemperatureStd(1)) + "," + String(getTemperatureSterr(1)) + ",";
+    return s;
+}
+
+//The reading interface: one reading per logReading(), printed as it is taken.
+void Walrus::beginReadings(uint8_t component, uint16_t n)
+{
+    _component = component;
+    if(component & MS5803) { _pressureReadings.reset(); _tempMS5803Readings.reset(); }
+    if(component & MCP9808) _tempExtReadings.reset();
+    _dev.beginBatch(n);
+}
+
+void Walrus::endReadings()
+{
+    //No cleanup required currently
+}
+
+size_t Walrus::printHeader(Print& out)
+{
+    size_t n = 0;
+    if(_component & MS5803) n += out.print("Pressure [mBar],Temp DHt [C],");
+    if(_component & MCP9808) n += out.print("Temp DH [C],");
+    return n;
+}
+
+size_t Walrus::printReading(Print& out)
+{
+    size_t n = 0;
+    if(_component & MS5803) { n += out.print(_pressure); n += out.print(','); n += out.print(_tempMS5803); n += out.print(','); }
+    if(_component & MCP9808) { n += out.print(_tempExt); n += out.print(','); }
+    return n;
+}
+
+size_t Walrus::logReading(Print& out)
+{
+    //One acquisition per chip group selected, then the values just taken.
+    if(_component & MS5803) {
+        uint8_t d[6];
+        _pressure = _tempMS5803 = NW_ERROR;
+        if(_dev.takeReading(MS5803) && _dev.readBytes(PRES_REG, d, 6) && readMS5803(d)) {
+            _pressure = _pressureReadings.last() / 1000.0;
+            _tempMS5803 = _tempMS5803Readings.last() / 100.0;
+        }
+    }
+    if(_component & MCP9808) {
+        uint8_t d[2];
+        _tempExt = NW_ERROR;
+        if(_dev.takeReading(MCP9808) && _dev.readBytes(TEMP_EXT, d, 2) && readMCP9808(d)) {
+            _tempExt = _tempExtReadings.last() / 100.0;
+        }
+    }
+    return printReading(out);
 }
