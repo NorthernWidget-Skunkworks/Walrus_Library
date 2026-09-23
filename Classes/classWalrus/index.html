@@ -225,7 +225,7 @@
           <aside class="sidebar__right sticky">
             <nav class="toc" aria-label="Table of contents">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
-              <ul class="toc__menu"><li><a href="#public-functions">Public Functions</a></li><li><a href="#public-attributes">Public Attributes</a></li><li><a href="#detailed-description">Detailed Description</a><ul><li><a href="#function-begin">function begin</a></li><li><a href="#function-gettemperature">function getTemperature</a></li><li><a href="#function-gettemperature-1">function getTemperature</a></li><li><a href="#function-getpressure">function getPressure</a></li><li><a href="#function-getheader">function getHeader</a></li><li><a href="#function-getstring">function getString</a></li><li><a href="#function-newdata">function newData</a></li></ul></li><li><a href="#public-attributes-documentation">Public Attributes Documentation</a><ul><li><a href="#variable-default_address">variable DEFAULT_ADDRESS</a></li></ul></li></ul>
+              <ul class="toc__menu"><li><a href="#public-functions">Public Functions</a></li><li><a href="#public-attributes">Public Attributes</a></li><li><a href="#detailed-description">Detailed Description</a><ul><li><a href="#function-begin">function begin</a></li><li><a href="#function-updatemeasurements">function updateMeasurements</a></li><li><a href="#function-gettemperature">function getTemperature</a></li><li><a href="#function-gettemperature-1">function getTemperature</a></li><li><a href="#function-getpressure">function getPressure</a></li><li><a href="#function-getheader">function getHeader</a></li><li><a href="#function-getstring">function getString</a></li><li><a href="#function-newdata">function newData</a></li><li><a href="#function-ready">function ready</a></li><li><a href="#function-newreading">function newReading</a></li><li><a href="#function-requestreading">function requestReading</a></li><li><a href="#function-faulted">function faulted</a></li><li><a href="#function-anyfault">function anyFault</a></li><li><a href="#function-faultchip">function faultChip</a></li><li><a href="#function-faultkind">function faultKind</a></li><li><a href="#function-printfault">function printFault</a></li><li><a href="#function-faultnote">function faultNote</a></li><li><a href="#function-beginfailure">function beginFailure</a></li><li><a href="#function-gethardwaremajor">function getHardwareMajor</a></li><li><a href="#function-gethardwareminor">function getHardwareMinor</a></li><li><a href="#function-getfirmwareversion">function getFirmwareVersion</a></li></ul></li><li><a href="#public-attributes-documentation">Public Attributes Documentation</a><ul><li><a href="#variable-default_address">variable DEFAULT_ADDRESS</a></li></ul></li></ul>
             </nav>
           </aside>
         
@@ -248,8 +248,12 @@
       <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-walrus">Walrus</a></strong>()<br />Instantiate <a href="/Walrus_Library/Classes/classWalrus/">Walrus</a> object.</td>
     </tr>
     <tr>
-      <td>uint8_t</td>
+      <td>bool</td>
       <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-begin">begin</a></strong>(uint8<em>t Address</em> =<a href="/Walrus_Library/Classes/classWalrus/#variable-default-address">DEFAULT_ADDRESS</a>)<br />Begin communications with the <a href="/Walrus_Library/Classes/classWalrus/">Walrus</a> using a prescribed address.</td>
+    </tr>
+    <tr>
+      <td>bool</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements</a></strong>()<br />Take one reading of both chips and store it for the getters.</td>
     </tr>
     <tr>
       <td>float</td>
@@ -257,11 +261,11 @@
     </tr>
     <tr>
       <td>float</td>
-      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-gettemperature">getTemperature</a></strong>()<br />Return calculated temperature from sensor, using a predefined offset. WHAT DOES THIS OFFSET DO?</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-gettemperature">getTemperature</a></strong>()<br />Return the MS5803 temperature (getTemperature(1)).</td>
     </tr>
     <tr>
       <td>float</td>
-      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getpressure">getPressure</a></strong>()<br />Return calculated pressure from sensor.</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getpressure">getPressure</a></strong>()<br />Return calculated pressure from sensor [mBar].</td>
     </tr>
     <tr>
       <td>String</td>
@@ -269,11 +273,63 @@
     </tr>
     <tr>
       <td>String</td>
-      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getstring">getString</a></strong>()<br />Return measurement data as a string.</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getstring">getString</a></strong>()<br />Take a reading (<a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a>) and return it as a string.</td>
     </tr>
     <tr>
       <td>bool</td>
-      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-newdata">newData</a></strong>()<br />Checks for updated data. Returns <code class="language-plaintext highlighter-rouge">true</code> if new data are available; otherwise returns <code class="language-plaintext highlighter-rouge">false</code></td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-newdata">newData</a></strong>()<br />Checks for updated data. Returns <code class="language-plaintext highlighter-rouge">true</code> if the device’s ready bit is set; otherwise returns <code class="language-plaintext highlighter-rouge">false</code>.</td>
+    </tr>
+    <tr>
+      <td>bool</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-ready">ready</a></strong>()<br />Status ready bit: the data registers hold a complete reading.</td>
+    </tr>
+    <tr>
+      <td>bool</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-newreading">newReading</a></strong>()<br />The reading counter has advanced since the last request.</td>
+    </tr>
+    <tr>
+      <td>bool</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-requestreading">requestReading</a></strong>()<br />Trigger a reading of both chips without waiting for it.</td>
+    </tr>
+    <tr>
+      <td>bool</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-faulted">faulted</a></strong>(uint8_t chip)<br />True if the given chip (0 = MS5803, 1 = MCP9808) was faulted in the last reading.</td>
+    </tr>
+    <tr>
+      <td>bool</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-anyfault">anyFault</a></strong>()<br />True if any chip was faulted in the last reading (status pan-fault bit).</td>
+    </tr>
+    <tr>
+      <td>uint8_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-faultchip">faultChip</a></strong>()<br />Chip index of the latched fault (0 MS5803, 1 MCP9808, 7 the unit); meaningful when <a href="">faultKind()</a> != 0.</td>
+    </tr>
+    <tr>
+      <td>uint8_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-faultkind">faultKind</a></strong>()<br />Kind of the latched fault, per the spec’s table (1 no acknowledge, 6 reset since configured, …).</td>
+    </tr>
+    <tr>
+      <td>size_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-printfault">printFault</a></strong>(Print &amp; out)<br />Print the latched fault as text, e.g. “MS5803: no acknowledge”; “none” when there is no fault.</td>
+    </tr>
+    <tr>
+      <td>String</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-faultnote">faultNote</a></strong>()<br />The latched fault as one word for a note column: “MS5803NoACK”, “UnitReset”; “UnitNone” when none.</td>
+    </tr>
+    <tr>
+      <td>String</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-beginfailure">beginFailure</a></strong>()<br />Why the last <a href="/Walrus_Library/Classes/classWalrus/#function-begin">begin()</a> refused, as one word: “NoACK”, “NotSchema1”, “WrongName”, “OldFirmware”; “None” after success.</td>
+    </tr>
+    <tr>
+      <td>uint8_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-gethardwaremajor">getHardwareMajor</a></strong>()</td>
+    </tr>
+    <tr>
+      <td>uint8_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-gethardwareminor">getHardwareMinor</a></strong>()</td>
+    </tr>
+    <tr>
+      <td>uint8_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getfirmwareversion">getFirmwareVersion</a></strong>()</td>
     </tr>
   </tbody>
 </table>
@@ -318,7 +374,7 @@ Walrus()
 
 <h3 id="function-begin">function begin</h3>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint8_t</span> <span class="n">begin</span><span class="p">(</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">begin</span><span class="p">(</span>
     <span class="kt">uint8_t</span> <span class="n">Address_</span> <span class="o">=</span><span class="n">DEFAULT_ADDRESS</span>
 <span class="p">)</span>
 </code></pre></div></div>
@@ -330,6 +386,21 @@ Walrus()
 <ul>
   <li><strong>Address_</strong> I2C address of <a href="/Walrus_Library/Classes/classWalrus/">Walrus</a></li>
 </ul>
+
+<p><strong>Return</strong>: true if the device answered and passed the three gates</p>
+
+<p>Refuses the device unless Page 0 says Schema 1, the name “Walrus”, and a firmware patch of at least WALRUS_FW_MIN_PATCH; <a href="/Walrus_Library/Classes/classWalrus/#function-beginfailure">beginFailure()</a> says which gate refused.</p>
+
+<h3 id="function-updatemeasurements">function updateMeasurements</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">updateMeasurements</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Take one reading of both chips and store it for the getters.</p>
+
+<p><strong>Return</strong>: true if the device answered and no chip faulted</p>
+
+<p>Triggers the device, waits for its reading counter to advance, then reads pressure and both temperatures in one transaction. A chip the device reports faulted leaves its values at NW_ERROR (-9999).</p>
 
 <h3 id="function-gettemperature">function getTemperature</h3>
 
@@ -343,24 +414,24 @@ Walrus()
 <p><strong>Parameters</strong>:</p>
 
 <ul>
-  <li><strong>Location</strong> TEMP_REG_0: Read dedicated temperature sensor. TEMP_REG_1: Read temperature sensor within the MS5803. APPEARS TO JUST WORK WITH TEMP_REG_0 FOR NOW</li>
+  <li><strong>Location</strong> 0: Read dedicated temperature sensor. 1: Read temperature sensor within the MS5803.</li>
 </ul>
 
-<p>This calculated temperature can be from either the MS5803 sensor, which primarily measures pressure, or from the</p>
+<p>This calculated temperature can be from either the MS5803 sensor, which primarily measures pressure, or from the dedicated MCP9808 sensor. Values are those stored by the last <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a> (NW_ERROR before the first).</p>
 
 <h3 id="function-gettemperature-1">function getTemperature</h3>
 
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">float</span> <span class="n">getTemperature</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p>Return calculated temperature from sensor, using a predefined offset. WHAT DOES THIS OFFSET DO?</p>
+<p>Return the MS5803 temperature (getTemperature(1)).</p>
 
 <h3 id="function-getpressure">function getPressure</h3>
 
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">float</span> <span class="n">getPressure</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p>Return calculated pressure from sensor.</p>
+<p>Return calculated pressure from sensor [mBar].</p>
 
 <p>This is the MS5803 sensor, which can come in a variety of different pressure ranges and sensitivities.</p>
 
@@ -378,7 +449,7 @@ Walrus()
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">String</span> <span class="n">getString</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p>Return measurement data as a string.</p>
+<p>Take a reading (<a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a>) and return it as a string.</p>
 
 <p>String(getPressure()) + “,” + String(getTemperature(0))</p>
 
@@ -391,13 +462,100 @@ Walrus()
 <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">newData</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p>Checks for updated data. Returns <code class="language-plaintext highlighter-rouge">true</code> if new data are available; otherwise returns <code class="language-plaintext highlighter-rouge">false</code></p>
+<p>Checks for updated data. Returns <code class="language-plaintext highlighter-rouge">true</code> if the device’s ready bit is set; otherwise returns <code class="language-plaintext highlighter-rouge">false</code>.</p>
 
-<p><strong>Parameters</strong>:</p>
+<p><strong>Deprecated</strong>:</p>
 
-<ul>
-  <li><strong>Block</strong> if <code class="language-plaintext highlighter-rouge">true</code>, wait for data to be returned. Defaults to <code class="language-plaintext highlighter-rouge">false</code>.</li>
-</ul>
+<p>Use <a href="/Walrus_Library/Classes/classWalrus/#function-ready">ready()</a>; the handshake is <a href="/Walrus_Library/Classes/classWalrus/#function-newreading">newReading()</a> after <a href="/Walrus_Library/Classes/classWalrus/#function-requestreading">requestReading()</a>.</p>
+
+<h3 id="function-ready">function ready</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">ready</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Status ready bit: the data registers hold a complete reading.</p>
+
+<h3 id="function-newreading">function newReading</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">newReading</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>The reading counter has advanced since the last request.</p>
+
+<h3 id="function-requestreading">function requestReading</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">requestReading</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Trigger a reading of both chips without waiting for it.</p>
+
+<h3 id="function-faulted">function faulted</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">faulted</span><span class="p">(</span>
+    <span class="kt">uint8_t</span> <span class="n">chip</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>True if the given chip (0 = MS5803, 1 = MCP9808) was faulted in the last reading.</p>
+
+<h3 id="function-anyfault">function anyFault</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">anyFault</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>True if any chip was faulted in the last reading (status pan-fault bit).</p>
+
+<h3 id="function-faultchip">function faultChip</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint8_t</span> <span class="n">faultChip</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Chip index of the latched fault (0 MS5803, 1 MCP9808, 7 the unit); meaningful when <a href="">faultKind()</a> != 0.</p>
+
+<h3 id="function-faultkind">function faultKind</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint8_t</span> <span class="n">faultKind</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Kind of the latched fault, per the spec’s table (1 no acknowledge, 6 reset since configured, …).</p>
+
+<h3 id="function-printfault">function printFault</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">size_t</span> <span class="n">printFault</span><span class="p">(</span>
+    <span class="n">Print</span> <span class="o">&amp;</span> <span class="n">out</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Print the latched fault as text, e.g. “MS5803: no acknowledge”; “none” when there is no fault.</p>
+
+<h3 id="function-faultnote">function faultNote</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">String</span> <span class="n">faultNote</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>The latched fault as one word for a note column: “MS5803NoACK”, “UnitReset”; “UnitNone” when none.</p>
+
+<h3 id="function-beginfailure">function beginFailure</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">String</span> <span class="n">beginFailure</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Why the last <a href="/Walrus_Library/Classes/classWalrus/#function-begin">begin()</a> refused, as one word: “NoACK”, “NotSchema1”, “WrongName”, “OldFirmware”; “None” after success.</p>
+
+<h3 id="function-gethardwaremajor">function getHardwareMajor</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint8_t</span> <span class="n">getHardwareMajor</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="function-gethardwareminor">function getHardwareMinor</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint8_t</span> <span class="n">getHardwareMinor</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="function-getfirmwareversion">function getFirmwareVersion</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint8_t</span> <span class="n">getFirmwareVersion</span><span class="p">()</span>
+</code></pre></div></div>
 
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 
@@ -410,7 +568,7 @@ Walrus()
 
 <hr />
 
-<p>Updated on 2026-09-22 at 23:10:14 +0000</p>
+<p>Updated on 2026-09-23 at 04:50:16 +0000</p>
 
         
       </section>

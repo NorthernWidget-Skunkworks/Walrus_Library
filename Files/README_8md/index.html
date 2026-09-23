@@ -235,7 +235,7 @@
 
 <span class="p">[</span><span class="nv">![DOI</span><span class="p">](</span><span class="sx">https://zenodo.org/badge/DOI/10.5281/zenodo.4572367.svg</span><span class="p">)</span>](https://doi.org/10.5281/zenodo.4572367)
 
-Library for the Northern Widget <span class="p">[</span><span class="nv">Walrus</span><span class="p">](</span><span class="sx">https://github.com/NorthernWidget-Skunkworks/Project-Walrus</span><span class="p">)</span> submersible pressure and temperature sensor. Based off of the TP-Downhole.
+Library for the Northern Widget <span class="p">[</span><span class="nv">Walrus</span><span class="p">](</span><span class="sx">https://github.com/NorthernWidget/Project-Walrus</span><span class="p">)</span> submersible pressure and temperature sensor. Based off of the TP-Downhole.
 
 The Walrus is an encapsulated submersible pressure and temperature sensor intended for water-level or barometric monitoring.
 
@@ -248,7 +248,7 @@ The Walrus is an encapsulated submersible pressure and temperature sensor intend
 
 <span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
     <span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
-    <span class="n">sensor</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">sensor</span><span class="p">.</span><span class="n">begin</span><span class="p">())</span> <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">sensor</span><span class="p">.</span><span class="n">beginFailure</span><span class="p">());</span>  <span class="c1">// NoACK, NotSchema1, WrongName, OldFirmware</span>
     <span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">sensor</span><span class="p">.</span><span class="n">getHeader</span><span class="p">());</span>
 <span class="p">}</span>
 
@@ -258,12 +258,14 @@ The Walrus is an encapsulated submersible pressure and temperature sensor intend
 <span class="p">}</span>
 </code></pre></div></div>
 
+<p><code class="language-plaintext highlighter-rouge">getString()</code> triggers one reading of both chips through the <a href="https://github.com/NorthernWidget/NW-Device-Specification">NW-Device-Specification</a> handshake (<code class="language-plaintext highlighter-rouge">updateMeasurements()</code>), waits for the device’s reading counter, and prints pressure [mBar], the MCP9808 water temperature and the MS5803 temperature [°C], with <code class="language-plaintext highlighter-rouge">-9999.00</code> where a reading failed. The getters <code class="language-plaintext highlighter-rouge">getPressure()</code>, <code class="language-plaintext highlighter-rouge">getTemperature(0)</code> (MCP9808) and <code class="language-plaintext highlighter-rouge">getTemperature(1)</code> (MS5803) return the stored reading. Faults, for sketches that want them: <code class="language-plaintext highlighter-rouge">faulted(chip)</code>, <code class="language-plaintext highlighter-rouge">anyFault()</code>, <code class="language-plaintext highlighter-rouge">faultChip()</code>, <code class="language-plaintext highlighter-rouge">faultKind()</code>, <code class="language-plaintext highlighter-rouge">printFault(Serial)</code>, <code class="language-plaintext highlighter-rouge">faultNote()</code> (one word, e.g. <code class="language-plaintext highlighter-rouge">MS5803NoACK</code>, for a logger’s note column). <code class="language-plaintext highlighter-rouge">begin()</code> refuses a device that is not Schema 1, not a Walrus, or below firmware patch <code class="language-plaintext highlighter-rouge">WALRUS_FW_MIN_PATCH</code>; <code class="language-plaintext highlighter-rouge">beginFailure()</code> says which. Requires the <a href="https://github.com/NorthernWidget/NW_Core">NW_Core</a> library and Walrus firmware patch 1 or later.</p>
+
 <p><strong>Full API reference:</strong> https://docs.northernwidget.com/Walrus_Library/
 ```</p>
 
 <hr />
 
-<p>Updated on 2026-09-22 at 23:10:14 +0000</p>
+<p>Updated on 2026-09-23 at 04:50:16 +0000</p>
 
         
       </section>

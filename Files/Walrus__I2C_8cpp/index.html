@@ -247,125 +247,90 @@ Distributed as-is; no warranty is given.
 #include</span> <span class="cpf">"Walrus_I2C.h"</span><span class="cp">
 </span>
 <span class="n">Walrus</span><span class="o">::</span><span class="n">Walrus</span><span class="p">()</span>
-<span class="c1">// Base library type I2C</span>
 <span class="p">{</span>
 <span class="p">}</span>
 
-
-<span class="kt">uint8_t</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">begin</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">Address_</span><span class="p">)</span>
+<span class="kt">bool</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">begin</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">Address_</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="n">Wire</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="c1">//Initialize Wire instance</span>
-    <span class="n">ADR</span> <span class="o">=</span> <span class="n">Address_</span><span class="p">;</span> <span class="c1">//Copy address to local</span>
+    <span class="c1">//Page 0 gates: Schema 1, the name "Walrus", firmware patch &gt;= WALRUS_FW_MIN_PATCH.</span>
+    <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="n">Address_</span><span class="p">,</span> <span class="s">"Walrus"</span><span class="p">,</span> <span class="n">WALRUS_FW_MIN_PATCH</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="c1">// float Walrus::getTemperature(uint8_t Location) //Returns temp in C from either subsensor</span>
-<span class="c1">// {</span>
-<span class="c1">//     long TempData[TEMP_OFFSET] = {0}; //Make temp data storage location</span>
-<span class="c1">//     uint8_t Offset = 0; //Default to TEMP_REG_0</span>
-<span class="c1">//     int Error = 0; //Error used for testing transmission</span>
-<span class="c1">//     if(Location == 1) Offset = 0x03;</span>
-<span class="c1">//     // Wire.beginTransmission(ADR);</span>
-<span class="c1">//     // Wire.write(TEMP_REG_0 + Offset); </span>
-<span class="c1">//     // Error = Wire.endTransmission();</span>
-
-<span class="c1">//     // Wire.requestFrom(ADR, 3); //Read 3 bytes from device</span>
-<span class="c1">//     for(int i = 0; i &lt; TEMP_OFFSET; i++) { //Increment over read</span>
-<span class="c1">//         Wire.beginTransmission(ADR);</span>
-<span class="c1">//         Wire.write(TEMP_REG_0 + Offset + i); </span>
-<span class="c1">//         Error = Wire.endTransmission();</span>
-<span class="c1">//         Wire.requestFrom((int)ADR, 1); //Cast ADR to match function</span>
-<span class="c1">//         TempData[i] = Wire.read(); //Read in data</span>
-<span class="c1">//     }</span>
-<span class="c1">//     // Serial.print("\n\n"); //DEBUG!</span>
-<span class="c1">//     // Serial.println(TEMP_REG_0 + Offset, HEX);</span>
-<span class="c1">//     // Serial.println(TempData[2], HEX);</span>
-<span class="c1">//     // Serial.println(TempData[1], HEX);</span>
-<span class="c1">//     // Serial.println(TempData[0], HEX);</span>
-<span class="c1">//     if(Error == 0) return float(long((TempData[2] &lt;&lt; 16) | (TempData[1] &lt;&lt; 8) | (TempData[0])))/1000.0; //If no error, return concatonated, scaled value</span>
-<span class="c1">//     else return -9999.0; //Else return error condition </span>
-<span class="c1">// }</span>
+<span class="kt">bool</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">updateMeasurements</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">_pressure</span> <span class="o">=</span> <span class="n">_tempExt</span> <span class="o">=</span> <span class="n">_tempMS5803</span> <span class="o">=</span> <span class="n">NW_ERROR</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">_dev</span><span class="p">.</span><span class="n">takeReading</span><span class="p">(</span><span class="mh">0x03</span><span class="p">))</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>       <span class="c1">//both chips: bit 0 MS5803, bit 1 MCP9808</span>
+    <span class="c1">//Block 1 and Block 2 are consecutive (0x28-0x31): one read.</span>
+    <span class="kt">uint8_t</span> <span class="n">d</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">_dev</span><span class="p">.</span><span class="n">readBytes</span><span class="p">(</span><span class="n">NW_REG_DATA</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">_dev</span><span class="p">.</span><span class="n">faulted</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="p">{</span>                          <span class="c1">//MS5803: pressure int32 uBar, temperature int16 0.01 C</span>
+        <span class="kt">int32_t</span> <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int32_t</span><span class="p">)((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">|</span> <span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">|</span> <span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">d</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">|</span> <span class="p">((</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">d</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">24</span><span class="p">));</span>
+        <span class="n">_pressure</span> <span class="o">=</span> <span class="kt">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">;</span>              <span class="c1">//uBar -&gt; mBar</span>
+        <span class="n">_tempMS5803</span> <span class="o">=</span> <span class="kt">float</span><span class="p">((</span><span class="kt">int16_t</span><span class="p">)(</span><span class="n">d</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">|</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)))</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">_dev</span><span class="p">.</span><span class="n">faulted</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="p">{</span>                          <span class="c1">//MCP9808: external temperature int16 0.01 C</span>
+        <span class="n">_tempExt</span> <span class="o">=</span> <span class="kt">float</span><span class="p">((</span><span class="kt">int16_t</span><span class="p">)(</span><span class="n">d</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span> <span class="o">|</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)))</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="o">!</span><span class="n">_dev</span><span class="p">.</span><span class="n">anyFault</span><span class="p">();</span>
+<span class="p">}</span>
 
 <span class="kt">float</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getTemperature</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">Location</span><span class="p">)</span> <span class="c1">//Returns temp in C from either subsensor</span>
 <span class="p">{</span>
-    <span class="kt">uint8_t</span> <span class="n">reg</span> <span class="o">=</span> <span class="p">(</span><span class="n">Location</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">TEMP_EXT</span> <span class="o">:</span> <span class="n">TEMP_MS5803</span><span class="p">;</span>
-    <span class="kt">int</span> <span class="n">Error</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="n">Wire</span><span class="p">.</span><span class="n">beginTransmission</span><span class="p">(</span><span class="n">ADR</span><span class="p">);</span>
-    <span class="n">Wire</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">reg</span><span class="p">);</span>
-    <span class="n">Error</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">endTransmission</span><span class="p">();</span>
-    <span class="n">Wire</span><span class="p">.</span><span class="n">requestFrom</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">ADR</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
-    <span class="kt">uint8_t</span> <span class="n">lo</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">read</span><span class="p">();</span>
-    <span class="kt">uint8_t</span> <span class="n">hi</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">read</span><span class="p">();</span>
-    <span class="kt">int16_t</span> <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int16_t</span><span class="p">)((</span><span class="kt">uint16_t</span><span class="p">)</span><span class="n">hi</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">|</span> <span class="n">lo</span><span class="p">);</span>
-    <span class="k">if</span><span class="p">(</span><span class="n">Error</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kt">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">;</span>
-    <span class="k">else</span> <span class="k">return</span> <span class="o">-</span><span class="mf">9999.0</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">Location</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="n">_tempExt</span> <span class="o">:</span> <span class="n">_tempMS5803</span><span class="p">;</span>
 <span class="p">}</span>
-
 
 <span class="kt">float</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getTemperature</span><span class="p">()</span> <span class="c1">//By default get thermistor temp value</span>
 <span class="p">{</span>
     <span class="k">return</span> <span class="n">getTemperature</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
 <span class="p">}</span>
 
-
-<span class="c1">// float Walrus::getPressure()</span>
-<span class="c1">// // Return a pressure reading units mBar.</span>
-<span class="c1">// {</span>
-<span class="c1">//     long TempData[3] = {0}; //Make temp data storage location</span>
-<span class="c1">//     int Error = 0; //Error used for testing transmission</span>
-<span class="c1">//     // Wire.beginTransmission(ADR);  //Command for data</span>
-<span class="c1">//     // Wire.write(PRES_REG); </span>
-<span class="c1">//     // Error = Wire.endTransmission();</span>
-
-<span class="c1">//     for(int i = 0; i &lt; 3; i++) { //Increment over read</span>
-<span class="c1">//         Wire.beginTransmission(ADR);</span>
-<span class="c1">//         Wire.write(PRES_REG + i); </span>
-<span class="c1">//         Error = Wire.endTransmission();</span>
-<span class="c1">//         Wire.requestFrom((int)ADR, 1); //Cast ADR to match function</span>
-<span class="c1">//         TempData[i] = Wire.read(); //Read in data</span>
-<span class="c1">//     }</span>
-
-<span class="c1">//     if(Error == 0) return float(long((TempData[2] &lt;&lt; 16) | (TempData[1] &lt;&lt; 8) | (TempData[0])))/1000.0; //If no error, return concatonated, scaled value</span>
-<span class="c1">//     else return -9999.0; //Else return error condition </span>
-<span class="c1">// }</span>
-
 <span class="kt">float</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getPressure</span><span class="p">()</span>
-<span class="c1">// Return a pressure reading units mBar.</span>
 <span class="p">{</span>
-    <span class="kt">long</span> <span class="n">TempData</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span> <span class="c1">//Make temp data storage location</span>
-    <span class="kt">int</span> <span class="n">Error</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">//Error used for testing transmission</span>
-    <span class="c1">// Wire.beginTransmission(ADR);  //Command for data</span>
-    <span class="c1">// Wire.write(PRES_REG);</span>
-    <span class="c1">// Error = Wire.endTransmission();</span>
-
-    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//Increment over read</span>
-        <span class="n">Wire</span><span class="p">.</span><span class="n">beginTransmission</span><span class="p">(</span><span class="n">ADR</span><span class="p">);</span>
-        <span class="n">Wire</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">PRES_REG</span> <span class="o">+</span> <span class="n">i</span><span class="p">);</span>
-        <span class="n">Error</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">endTransmission</span><span class="p">();</span>
-        <span class="n">Wire</span><span class="p">.</span><span class="n">requestFrom</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">ADR</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">//Cast ADR to match function</span>
-        <span class="n">TempData</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">read</span><span class="p">();</span> <span class="c1">//Read in data</span>
-    <span class="p">}</span>
-
-    <span class="kt">long</span> <span class="n">PresVal</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">PresVal</span> <span class="o">=</span> <span class="n">PresVal</span> <span class="o">|</span> <span class="p">(</span><span class="n">TempData</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="o">*</span><span class="n">i</span><span class="p">);</span>
-    <span class="p">}</span>
-
-    <span class="k">if</span><span class="p">(</span><span class="n">Error</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="kt">float</span><span class="p">(</span><span class="n">PresVal</span><span class="p">)</span><span class="o">/</span><span class="mf">1000.0</span><span class="p">;</span> <span class="c1">//If no error, return concatonated, scaled value</span>
-    <span class="k">else</span> <span class="k">return</span> <span class="o">-</span><span class="mf">9999.0</span><span class="p">;</span> <span class="c1">//Else return error condition </span>
+    <span class="k">return</span> <span class="n">_pressure</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kt">bool</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">newData</span><span class="p">()</span>  <span class="c1">// Checks for updated/valid data</span>
+<span class="kt">bool</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">newData</span><span class="p">()</span>  <span class="c1">//Checks for updated/valid data</span>
 <span class="p">{</span>
-    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">timeout</span> <span class="o">=</span> <span class="n">millis</span><span class="p">();</span> <span class="c1">// Get timeout value</span>
-    <span class="n">Wire</span><span class="p">.</span><span class="n">beginTransmission</span><span class="p">(</span><span class="n">ADR</span><span class="p">);</span>
-    <span class="n">Wire</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="mh">0x20</span><span class="p">);</span> <span class="c1">//Schema 1 Page 1 status byte</span>
-    <span class="n">Wire</span><span class="p">.</span><span class="n">endTransmission</span><span class="p">();</span>
-    <span class="n">Wire</span><span class="p">.</span><span class="n">requestFrom</span><span class="p">(</span><span class="n">ADR</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-    <span class="k">while</span><span class="p">(</span><span class="n">Wire</span><span class="p">.</span><span class="n">available</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">millis</span><span class="p">()</span> <span class="o">-</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="n">timeoutGlobal</span><span class="p">))</span> <span class="p">{</span>
-        <span class="n">delay</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-    <span class="p">}</span>
-    <span class="kt">uint8_t</span> <span class="n">val</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">read</span><span class="p">();</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">val</span> <span class="o">&amp;</span> <span class="mh">0x01</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">ready</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">bool</span>    <span class="n">Walrus</span><span class="o">::</span><span class="n">ready</span><span class="p">()</span>            <span class="p">{</span> <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">ready</span><span class="p">();</span> <span class="p">}</span>
+<span class="kt">bool</span>    <span class="n">Walrus</span><span class="o">::</span><span class="n">newReading</span><span class="p">()</span>       <span class="p">{</span> <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">newReading</span><span class="p">();</span> <span class="p">}</span>
+<span class="kt">bool</span>    <span class="n">Walrus</span><span class="o">::</span><span class="n">requestReading</span><span class="p">()</span>   <span class="p">{</span> <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">requestReading</span><span class="p">(</span><span class="mh">0x03</span><span class="p">);</span> <span class="p">}</span>
+<span class="kt">bool</span>    <span class="n">Walrus</span><span class="o">::</span><span class="n">faulted</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">chip</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">faulted</span><span class="p">(</span><span class="n">chip</span><span class="p">);</span> <span class="p">}</span>
+<span class="kt">bool</span>    <span class="n">Walrus</span><span class="o">::</span><span class="n">anyFault</span><span class="p">()</span>         <span class="p">{</span> <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">anyFault</span><span class="p">();</span> <span class="p">}</span>
+<span class="kt">uint8_t</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">faultChip</span><span class="p">()</span>        <span class="p">{</span> <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">faultChip</span><span class="p">();</span> <span class="p">}</span>
+<span class="kt">uint8_t</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">faultKind</span><span class="p">()</span>        <span class="p">{</span> <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">faultKind</span><span class="p">();</span> <span class="p">}</span>
+<span class="n">String</span>  <span class="n">Walrus</span><span class="o">::</span><span class="n">beginFailure</span><span class="p">()</span>     <span class="p">{</span> <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">beginFailure</span><span class="p">();</span> <span class="p">}</span>
+<span class="kt">uint8_t</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getHardwareMajor</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">hardwareMajor</span><span class="p">();</span> <span class="p">}</span>
+<span class="kt">uint8_t</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getHardwareMinor</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">hardwareMinor</span><span class="p">();</span> <span class="p">}</span>
+<span class="kt">uint8_t</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getFirmwareVersion</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_dev</span><span class="p">.</span><span class="n">firmwareVersion</span><span class="p">();</span> <span class="p">}</span>
+
+<span class="kt">size_t</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">printFault</span><span class="p">(</span><span class="n">Print</span><span class="o">&amp;</span> <span class="n">out</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">//The chip names are Walrus's own; the kind names are universal (NW_Fault).</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="k">const</span> <span class="n">chips</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="s">"MS5803"</span><span class="p">,</span> <span class="s">"MCP9808"</span><span class="p">};</span>
+    <span class="kt">uint8_t</span> <span class="n">chip</span> <span class="o">=</span> <span class="n">faultChip</span><span class="p">(),</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">faultKind</span><span class="p">();</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">kind</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">out</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"none"</span><span class="p">);</span>
+    <span class="kt">size_t</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">chip</span> <span class="o">==</span> <span class="mi">7</span><span class="p">)</span> <span class="n">n</span> <span class="o">+=</span> <span class="n">out</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"unit"</span><span class="p">);</span>
+    <span class="k">else</span> <span class="nf">if</span><span class="p">(</span><span class="n">chip</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="n">n</span> <span class="o">+=</span> <span class="n">out</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">chips</span><span class="p">[</span><span class="n">chip</span><span class="p">]);</span>
+    <span class="k">else</span> <span class="p">{</span> <span class="n">n</span> <span class="o">+=</span> <span class="n">out</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">"chip "</span><span class="p">);</span> <span class="n">n</span> <span class="o">+=</span> <span class="n">out</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">chip</span><span class="p">);</span> <span class="p">}</span>
+    <span class="n">n</span> <span class="o">+=</span> <span class="n">out</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">": "</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">n</span> <span class="o">+</span> <span class="n">_dev</span><span class="p">.</span><span class="n">fault</span><span class="p">().</span><span class="n">printKind</span><span class="p">(</span><span class="n">out</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">String</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">faultNote</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">//One word for a data-table note: the chip, then the kind ("MS5803NoACK").</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="k">const</span> <span class="n">chips</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="s">"MS5803"</span><span class="p">,</span> <span class="s">"MCP9808"</span><span class="p">};</span>
+    <span class="kt">uint8_t</span> <span class="n">chip</span> <span class="o">=</span> <span class="n">faultChip</span><span class="p">();</span>
+    <span class="n">String</span> <span class="n">w</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">chip</span> <span class="o">==</span> <span class="mi">7</span><span class="p">)</span> <span class="n">w</span> <span class="o">=</span> <span class="n">F</span><span class="p">(</span><span class="s">"Unit"</span><span class="p">);</span>
+    <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">chip</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span> <span class="n">w</span> <span class="o">=</span> <span class="n">chips</span><span class="p">[</span><span class="n">chip</span><span class="p">];</span>
+    <span class="k">else</span> <span class="p">{</span> <span class="n">w</span> <span class="o">=</span> <span class="n">F</span><span class="p">(</span><span class="s">"Chip"</span><span class="p">);</span> <span class="n">w</span> <span class="o">+=</span> <span class="n">String</span><span class="p">(</span><span class="n">chip</span><span class="p">);</span> <span class="p">}</span>
+    <span class="n">w</span> <span class="o">+=</span> <span class="n">_dev</span><span class="p">.</span><span class="n">fault</span><span class="p">().</span><span class="n">kindWord</span><span class="p">();</span>
+    <span class="k">return</span> <span class="n">w</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="n">String</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getHeader</span><span class="p">()</span>
@@ -375,23 +340,15 @@ Distributed as-is; no warranty is given.
 
 <span class="n">String</span> <span class="n">Walrus</span><span class="o">::</span><span class="n">getString</span><span class="p">()</span>
 <span class="p">{</span>
-    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">timeout</span> <span class="o">=</span> <span class="n">millis</span><span class="p">();</span> <span class="c1">//Get timeout value</span>
-    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">newData</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">millis</span><span class="p">()</span> <span class="o">-</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="n">timeoutGlobal</span><span class="p">))</span> <span class="p">{</span>
-            <span class="n">delay</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-        <span class="p">}</span>
-    <span class="k">if</span><span class="p">(</span><span class="n">newData</span><span class="p">())</span> <span class="p">{</span>
-            <span class="k">return</span> <span class="n">String</span><span class="p">(</span><span class="n">getPressure</span><span class="p">())</span> <span class="o">+</span> <span class="s">","</span> <span class="o">+</span> <span class="n">String</span><span class="p">(</span><span class="n">getTemperature</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">+</span> <span class="s">","</span> \
-                                   <span class="o">+</span> <span class="n">String</span><span class="p">(</span><span class="n">getTemperature</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="s">","</span><span class="p">;</span>
-    <span class="p">}</span>
-    <span class="k">else</span> <span class="k">return</span> <span class="s">"-9999.0,-9999.0,-9999.0,"</span><span class="p">;</span> <span class="c1">//Return failure state //FIX hardcode??</span>
-    <span class="c1">//Return data string</span>
-
+    <span class="n">updateMeasurements</span><span class="p">();</span>                           <span class="c1">//NW_ERROR (-9999) where a reading failed</span>
+    <span class="k">return</span> <span class="n">String</span><span class="p">(</span><span class="n">getPressure</span><span class="p">())</span> <span class="o">+</span> <span class="s">","</span> <span class="o">+</span> <span class="n">String</span><span class="p">(</span><span class="n">getTemperature</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="o">+</span> <span class="s">","</span> \
+                                 <span class="o">+</span> <span class="n">String</span><span class="p">(</span><span class="n">getTemperature</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="s">","</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <hr />
 
-<p>Updated on 2026-09-22 at 23:10:14 +0000</p>
+<p>Updated on 2026-09-23 at 04:50:16 +0000</p>
 
         
       </section>

@@ -225,7 +225,7 @@
           <aside class="sidebar__right sticky">
             <nav class="toc" aria-label="Table of contents">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
-              <ul class="toc__menu"><li><a href="#classes">Classes</a></li><li><a href="#defines">Defines</a></li><li><a href="#macros-documentation">Macros Documentation</a><ul><li><a href="#define-pres_reg">define PRES_REG</a></li><li><a href="#define-temp_ms5803">define TEMP_MS5803</a></li><li><a href="#define-temp_ext">define TEMP_EXT</a></li><li><a href="#define-adr_default">define ADR_DEFAULT</a></li></ul></li><li><a href="#source-code">Source code</a></li></ul>
+              <ul class="toc__menu"><li><a href="#classes">Classes</a></li><li><a href="#defines">Defines</a></li><li><a href="#macros-documentation">Macros Documentation</a><ul><li><a href="#define-walrus_fw_min_patch">define WALRUS_FW_MIN_PATCH</a></li><li><a href="#define-pres_reg">define PRES_REG</a></li><li><a href="#define-temp_ms5803">define TEMP_MS5803</a></li><li><a href="#define-temp_ext">define TEMP_EXT</a></li><li><a href="#define-adr_default">define ADR_DEFAULT</a></li></ul></li><li><a href="#source-code">Source code</a></li></ul>
             </nav>
           </aside>
         
@@ -258,6 +258,10 @@
   <tbody>
     <tr>
       <td> </td>
+      <td><strong><a href="/Walrus_Library/Files/Walrus__I2C_8h/#define-walrus-fw-min-patch">WALRUS_FW_MIN_PATCH</a></strong></td>
+    </tr>
+    <tr>
+      <td> </td>
       <td><strong><a href="/Walrus_Library/Files/Walrus__I2C_8h/#define-pres-reg">PRES_REG</a></strong></td>
     </tr>
     <tr>
@@ -276,6 +280,13 @@
 </table>
 
 <h2 id="macros-documentation">Macros Documentation</h2>
+
+<h3 id="define-walrus_fw_min_patch">define WALRUS_FW_MIN_PATCH</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define WALRUS_FW_MIN_PATCH 1
+</span></code></pre></div></div>
+
+<p>Lowest firmware patch (Page 0 byte 0x0A) this library accepts: patch 1 brought the Block 0 handshake (trigger, reading counter, faults).</p>
 
 <h3 id="define-pres_reg">define PRES_REG</h3>
 
@@ -319,37 +330,49 @@ Distributed as-is; no warranty is given.
 #define Walrus_I2C_h
 </span>
 <span class="cp">#include</span> <span class="cpf">&lt;Arduino.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;NW_Core.h&gt;</span><span class="c1">   // NW_Core: NW_Device (Schema 1 protocol), NW_Fault</span><span class="cp">
+</span>
+<span class="cp">#define WALRUS_FW_MIN_PATCH 1
 </span>
 <span class="cp">#define PRES_REG    0x28  // Schema 1 Page 1 Block 1: pressure, int32, µBar
 #define TEMP_MS5803 0x2C  // Schema 1 Page 1 Block 1: MS5803 temperature, int16, 0.01 °C
 #define TEMP_EXT    0x30  // Schema 1 Page 1 Block 2: external temperature (MCP9808), int16, 0.01 °C
 </span>
-
 <span class="k">class</span> <span class="nc">Walrus</span>
 <span class="p">{</span>
     <span class="nl">public:</span>
         <span class="k">static</span> <span class="k">constexpr</span> <span class="kt">uint8_t</span> <span class="n">DEFAULT_ADDRESS</span> <span class="o">=</span> <span class="mh">0x57</span><span class="p">;</span>
-
-
         <span class="n">Walrus</span><span class="p">();</span>  <span class="c1">// Constructor</span>
-
-        <span class="kt">uint8_t</span> <span class="n">begin</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">Address_</span> <span class="o">=</span> <span class="n">DEFAULT_ADDRESS</span><span class="p">);</span>
-
+        <span class="kt">bool</span> <span class="n">begin</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">Address_</span> <span class="o">=</span> <span class="n">DEFAULT_ADDRESS</span><span class="p">);</span>
+        <span class="kt">bool</span> <span class="n">updateMeasurements</span><span class="p">();</span>
         <span class="kt">float</span> <span class="n">getTemperature</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">Location</span><span class="p">);</span>
-
         <span class="kt">float</span> <span class="n">getTemperature</span><span class="p">();</span>
-
         <span class="kt">float</span> <span class="n">getPressure</span><span class="p">();</span>
-
         <span class="n">String</span> <span class="n">getHeader</span><span class="p">();</span>
-
         <span class="n">String</span> <span class="n">getString</span><span class="p">();</span>
-
         <span class="kt">bool</span> <span class="n">newData</span><span class="p">();</span>
 
+        <span class="c1">// --- Handshake (NW-Device-Specification Block 0) ---</span>
+        <span class="kt">bool</span> <span class="n">ready</span><span class="p">();</span>
+        <span class="kt">bool</span> <span class="n">newReading</span><span class="p">();</span>
+        <span class="kt">bool</span> <span class="n">requestReading</span><span class="p">();</span>
+
+        <span class="c1">// --- Faults (status byte, live; fault byte, latched) ---</span>
+        <span class="kt">bool</span> <span class="n">faulted</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">chip</span><span class="p">);</span>
+        <span class="kt">bool</span> <span class="n">anyFault</span><span class="p">();</span>
+        <span class="kt">uint8_t</span> <span class="n">faultChip</span><span class="p">();</span>
+        <span class="kt">uint8_t</span> <span class="n">faultKind</span><span class="p">();</span>
+        <span class="kt">size_t</span> <span class="n">printFault</span><span class="p">(</span><span class="n">Print</span><span class="o">&amp;</span> <span class="n">out</span><span class="p">);</span>
+        <span class="n">String</span> <span class="n">faultNote</span><span class="p">();</span>
+        <span class="n">String</span> <span class="n">beginFailure</span><span class="p">();</span>
+        <span class="kt">uint8_t</span> <span class="n">getHardwareMajor</span><span class="p">();</span>
+        <span class="kt">uint8_t</span> <span class="n">getHardwareMinor</span><span class="p">();</span>
+        <span class="kt">uint8_t</span> <span class="n">getFirmwareVersion</span><span class="p">();</span>
     <span class="nl">private:</span>
-        <span class="kt">uint8_t</span> <span class="n">ADR</span> <span class="o">=</span> <span class="n">DEFAULT_ADDRESS</span><span class="p">;</span> <span class="c1">//Default address</span>
-        <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">timeoutGlobal</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span> <span class="c1">//Timeout value, ms //FIX??</span>
+        <span class="n">NW_Device</span> <span class="n">_dev</span><span class="p">;</span>
+        <span class="kt">float</span> <span class="n">_pressure</span> <span class="o">=</span> <span class="n">NW_ERROR</span><span class="p">;</span>   <span class="c1">//Stored by updateMeasurements() [mBar]</span>
+        <span class="kt">float</span> <span class="n">_tempExt</span> <span class="o">=</span> <span class="n">NW_ERROR</span><span class="p">;</span>    <span class="c1">//MCP9808 [C]</span>
+        <span class="kt">float</span> <span class="n">_tempMS5803</span> <span class="o">=</span> <span class="n">NW_ERROR</span><span class="p">;</span> <span class="c1">//MS5803 [C]</span>
 <span class="p">};</span>
 
 <span class="cp">#define ADR_DEFAULT Walrus::DEFAULT_ADDRESS
@@ -359,7 +382,7 @@ Distributed as-is; no warranty is given.
 
 <hr />
 
-<p>Updated on 2026-09-22 at 23:10:14 +0000</p>
+<p>Updated on 2026-09-23 at 04:50:16 +0000</p>
 
         
       </section>
