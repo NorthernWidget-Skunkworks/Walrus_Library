@@ -308,17 +308,17 @@
 
 <h3 id="define-pres_reg">define PRES_REG</h3>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define PRES_REG 0x28
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define PRES_REG 0x48
 </span></code></pre></div></div>
 
 <h3 id="define-temp_ms5803">define TEMP_MS5803</h3>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define TEMP_MS5803 0x2C
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define TEMP_MS5803 0x4C
 </span></code></pre></div></div>
 
 <h3 id="define-temp_ext">define TEMP_EXT</h3>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define TEMP_EXT 0x30
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define TEMP_EXT 0x50
 </span></code></pre></div></div>
 
 <h3 id="define-adr_default">define ADR_DEFAULT</h3>
@@ -362,9 +362,9 @@ Distributed as-is; no warranty is given.
 </span>  <span class="cp">#define WALRUS_TEMPERATURE_CAPACITY 16   // MCP9808: external temperature
 #endif
 </span>
-<span class="cp">#define PRES_REG    0x28  // Schema 1 Page 1 Block 1: pressure, int32, µBar
-#define TEMP_MS5803 0x2C  // Schema 1 Page 1 Block 1: MS5803 temperature, int16, 0.01 °C
-#define TEMP_EXT    0x30  // Schema 1 Page 1 Block 2: external temperature (MCP9808), int16, 0.01 °C
+<span class="cp">#define PRES_REG    0x48  // Schema 1 Page 2 Block 1: pressure, int32, µBar
+#define TEMP_MS5803 0x4C  // Schema 1 Page 2 Block 1: MS5803 temperature, int16, 0.01 °C
+#define TEMP_EXT    0x50  // Schema 1 Page 2 Block 2: external temperature (MCP9808), int16, 0.01 °C
 </span>
 <span class="k">class</span> <span class="nc">Walrus</span>
 <span class="p">{</span>
@@ -444,8 +444,8 @@ Distributed as-is; no warranty is given.
         <span class="n">NW_ReadingsConfig</span> <span class="n">_pressureCfg</span><span class="p">;</span>    <span class="c1">//Readings per updateMeasurements() and stats columns, MS5803 group</span>
         <span class="n">NW_ReadingsConfig</span> <span class="n">_temperatureCfg</span><span class="p">;</span> <span class="c1">//MCP9808 group</span>
         <span class="kt">uint8_t</span> <span class="n">_component</span> <span class="o">=</span> <span class="n">ALL</span><span class="p">;</span>     <span class="c1">//Selection of the current beginReadings() run</span>
-        <span class="kt">bool</span> <span class="nf">readMS5803</span><span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span> <span class="n">d</span><span class="p">);</span>  <span class="c1">//Append one served MS5803 reading (6 bytes from 0x28) unless faulted</span>
-        <span class="kt">bool</span> <span class="nf">readMCP9808</span><span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span> <span class="n">d</span><span class="p">);</span> <span class="c1">//Append one served MCP9808 reading (2 bytes from 0x30) unless faulted</span>
+        <span class="kt">bool</span> <span class="nf">readMS5803</span><span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span> <span class="n">d</span><span class="p">);</span>  <span class="c1">//Append one served MS5803 reading (6 bytes from 0x48) unless faulted</span>
+        <span class="kt">bool</span> <span class="nf">readMCP9808</span><span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span> <span class="n">d</span><span class="p">);</span> <span class="c1">//Append one served MCP9808 reading (2 bytes from 0x50) unless faulted</span>
         <span class="kt">void</span> <span class="nf">summarise</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">component</span><span class="p">);</span> <span class="c1">//Means into the single-value fields, NW_ERROR when no reading</span>
 <span class="p">};</span>
 
@@ -456,7 +456,7 @@ Distributed as-is; no warranty is given.
 
 <hr />
 
-<p>Updated on 2026-09-23 at 17:21:32 +0000</p>
+<p>Updated on 2026-09-23 at 20:12:21 +0000</p>
 
         
       </section>
