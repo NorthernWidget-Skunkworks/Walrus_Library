@@ -39,7 +39,7 @@ bool Walrus::updateMeasurements(uint8_t component)
     }
     else {
         //Per chip group: N readings each, appended to the arrays; a chip that
-        //reports absent (no acknowledge / not initialised) stops its batch.
+        //reports absent (not answering / self-test failed) stops its batch.
         if(doMS) _dev.takeReadings(MS5803, _pressureCfg.n, [this] { return updatePressure(); });
         if(doMCP) _dev.takeReadings(MCP9808, _temperatureCfg.n, [this] { return updateTemperature(); });
     }
@@ -161,7 +161,7 @@ void    Walrus::clearBootReport() { _dev.clearBootReport(); }
 
 String Walrus::reportNote()
 {
-    //One word for a data-table note: the chip, then the kind ("MS5803NoACK").
+    //One word for a data-table note: the chip, then the kind ("MS5803NotAnswering").
     static const char* const chips[] = {"MS5803", "MCP9808"};
     return _dev.report().note(chips, 2);
 }

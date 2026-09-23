@@ -40,7 +40,7 @@ int main() {
   loadImage(1250000, -1234, -50);
   { Walrus s; s.begin(); report("negative temperatures", s); }
 
-  // 3. Device absent: no acknowledge at the address.
+  // 3. Device absent: not answering at the address.
   loadImage(1013250, 2137, 405); Wire.present = false;
   { Walrus s; s.begin(); report("device absent", s); }
   Wire.present = true;
@@ -119,7 +119,7 @@ int main() {
     BufferPrint bp2(pb, sizeof pb); s.logReading(bp2); s.endReadings(); printf("[run MCP9808] row: %s\n", pb);
     onReading = nullptr; }
 
-  // 10. A dead MS5803 (no acknowledge on the first reading) stops its batch of 10.
+  // 10. A dead MS5803 (not answering on the first reading) stops its batch of 10.
   loadImage(1013250, 2137, 405);
   { Walrus s; s.begin(); int k = 0;
     onReading = [&](TwoWire& w) { k++; w.image[0x40] = 0x83; w.image[0x47] = 0x01; };

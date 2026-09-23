@@ -218,20 +218,20 @@ class Walrus : public NW_Sensor
         bool anyFault();
         /** @brief Chip index of the report (0 MS5803, 1 MCP9808, 7 the unit); meaningful when reportKind() != 0. */
         uint8_t reportChip();
-        /** @brief Kind of the report, per the spec's table (1 no acknowledge, 6 reset since configured, ...). */
+        /** @brief Kind of the report, per the spec's table (1 not answering, 6 restarted since configured, ...). */
         uint8_t reportKind();
-        /** @brief Print the report as text, e.g. "MS5803: no acknowledge"; "none" when there is no fault. */
+        /** @brief Print the report as text, e.g. "MS5803: not answering"; "none" when there is no fault. */
         size_t printReport(Print& out);
-        /** @brief The report as one word for a note column: "MS5803NoACK", "UnitReset"; "UnitNone" when none. */
+        /** @brief The report as one word for a note column: "MS5803NotAnswering", "UnitRestarted"; "UnitNone" when none. */
         String reportNote();
-        /** @brief Print one status line for a logger's status file: name, serial, versions, the last report, Pages 0-2 in hex; no newline, no acknowledge. */
+        /** @brief Print one status line for a logger's status file: name, serial, versions, the last report, Pages 0-2 in hex; no newline, not answering. */
         size_t printStatus(Print& out, bool boot = false) override;
         // --- NW_Sensor: the logger's view (Margay::watch) ---
         const char* name() const override { return "Walrus"; }
         bool reportIsFault() override;
         uint8_t bootReportKind() override;
         void clearBootReport() override;
-        /** @brief Why the last begin() refused, as one word: "NoACK", "NotSchema1", "WrongName", "OldFirmware"; "None" after success. */
+        /** @brief Why the last begin() refused, as one word: "NotAnswering", "NotSchema1", "WrongName", "OldFirmware"; "None" after success. */
         String beginFailure();
         uint8_t getHardwareMajor();
         uint8_t getHardwareMinor();
