@@ -9,15 +9,15 @@ TwoWire Wire;
 #include "NW_TestSupport.h"
 
 // Build a Schema 1 register image: Page 0 as NW-Provision writes it (with the
-// firmware's patch at 0x0A), Page 1 with a complete reading (Walrus appendix:
-// pressure int32 uBar at 0x28, MS5803 temperature int16 0.01 C at 0x2C,
-// external temperature int16 0.01 C at 0x30).
+// firmware's patch at 0x0A), Page 2 with a complete reading (Walrus appendix:
+// pressure int32 uBar at 0x48, MS5803 temperature int16 0.01 C at 0x4C,
+// external temperature int16 0.01 C at 0x50).
 static void loadImage(int32_t pressure, int16_t tMS5803, int16_t tExt, uint8_t fwPatch = 1, uint8_t schema = 0x01) {
   uint8_t* r = Wire.image;
   nwLoadPage0(r, "Walrus", 0x57, 2, fwPatch, schema);               // Page 0 and Block 0, HW 0.2
-  for (int i = 0; i < 4; i++) r[0x28 + i] = (pressure >> (8 * i)) & 0xFF;
-  r[0x2C] = tMS5803 & 0xFF; r[0x2D] = (tMS5803 >> 8) & 0xFF;
-  r[0x30] = tExt & 0xFF;    r[0x31] = (tExt >> 8) & 0xFF;
+  for (int i = 0; i < 4; i++) r[0x48 + i] = (pressure >> (8 * i)) & 0xFF;
+  r[0x4C] = tMS5803 & 0xFF; r[0x4D] = (tMS5803 >> 8) & 0xFF;
+  r[0x50] = tExt & 0xFF;    r[0x51] = (tExt >> 8) & 0xFF;
 }
 
 static void report(const char* name, Walrus& s) {
@@ -46,7 +46,7 @@ int main() {
   Wire.present = true;
 
   // 4. Device present but never ready (status bit 0 clear, counter frozen).
-  loadImage(1013250, 2137, 405); Wire.image[0x20] = 0x00; Wire.onWrite = nullptr;
+  loadImage(1013250, 2137, 405); Wire.image[0x40] = 0x00; Wire.onWrite = nullptr;
   { Walrus s; s.begin(); report("never ready", s); }
   installFirmwareEmulation();
 
@@ -64,12 +64,12 @@ int main() {
   //    the MCP9808 value survives. Then a unit reset code with a clean status.
   loadImage(1013250, 2137, 405);
   { Walrus s; s.begin(); char pb[48];
-    onReading = [](TwoWire& w) { w.image[0x20] = 0x83; w.image[0x27] = 0x01; };
+    onReading = [](TwoWire& w) { w.image[0x40] = 0x83; w.image[0x47] = 0x01; };
     bool ok = s.updateMeasurements(); BufferPrint bp(pb, sizeof pb); s.printReport(bp);
     printf("[MS5803 no ack] update=%d faulted(0)=%d faulted(1)=%d any=%d chip=%u kind=%u text='%s' note='%s'\n",
            ok, s.faulted(0), s.faulted(1), s.anyFault(), s.reportChip(), s.reportKind(), pb, s.reportNote().c_str());
     printf("[MS5803 no ack] string: %s\n", s.getString().c_str());
-    onReading = [](TwoWire& w) { w.image[0x20] = 0x01; w.image[0x27] = 0xE6; };
+    onReading = [](TwoWire& w) { w.image[0x40] = 0x01; w.image[0x47] = 0xE6; };
     ok = s.updateMeasurements(); BufferPrint bp2(pb, sizeof pb); s.printReport(bp2);
     printf("[unit reset] update=%d any=%d chip=%u kind=%u text='%s' note='%s'\n", ok, s.anyFault(), s.reportChip(), s.reportKind(), pb, s.reportNote().c_str());
     onReading = nullptr; }
@@ -86,8 +86,8 @@ int main() {
   loadImage(1013250, 2137, 405);
   { Walrus s; s.begin(); int k = 0;
     onReading = [&](TwoWire& w) { k++;
-      int32_t p = 1013000 + 100 * (k % 5); for (int i = 0; i < 4; i++) w.image[0x28 + i] = (p >> (8 * i)) & 0xFF;
-      int16_t t = 400 + 10 * (k % 3); w.image[0x30] = t & 0xFF; w.image[0x31] = (t >> 8) & 0xFF; };
+      int32_t p = 1013000 + 100 * (k % 5); for (int i = 0; i < 4; i++) w.image[0x48 + i] = (p >> (8 * i)) & 0xFF;
+      int16_t t = 400 + 10 * (k % 3); w.image[0x50] = t & 0xFF; w.image[0x51] = (t >> 8) & 0xFF; };
     printf("[N] setPressureReadings(5)=%u setTemperatureReadings(3)=%u setPressureReadings(99)=%u\n",
            s.setPressureReadings(5), s.setTemperatureReadings(3), s.setPressureReadings(99));
     s.setPressureReadings(5); s.setPressureStats(true); s.setTemperatureStats(true);
@@ -108,7 +108,7 @@ int main() {
   //    batch word for the run reaches the device.
   loadImage(1013250, 2137, 405);
   { Walrus s; s.begin(); int k = 0; char pb[96];
-    onReading = [&](TwoWire& w) { k++; int32_t p = 1013000 + 50 * k; for (int i = 0; i < 4; i++) w.image[0x28 + i] = (p >> (8 * i)) & 0xFF; };
+    onReading = [&](TwoWire& w) { k++; int32_t p = 1013000 + 50 * k; for (int i = 0; i < 4; i++) w.image[0x48 + i] = (p >> (8 * i)) & 0xFF; };
     lastRequest = 0; s.beginReadings(Walrus::ALL, 3);
     BufferPrint bh(pb, sizeof pb); s.printHeader(bh); printf("[run ALL] header: %s lastRequest=%u\n", pb, lastRequest);
     for (int i = 0; i < 3; i++) { BufferPrint bp(pb, sizeof pb); size_t n = s.logReading(bp); printf("[run ALL] row %d (%zu bytes): %s\n", i, n, pb); }
@@ -122,7 +122,7 @@ int main() {
   // 10. A dead MS5803 (no acknowledge on the first reading) stops its batch of 10.
   loadImage(1013250, 2137, 405);
   { Walrus s; s.begin(); int k = 0;
-    onReading = [&](TwoWire& w) { k++; w.image[0x20] = 0x83; w.image[0x27] = 0x01; };
+    onReading = [&](TwoWire& w) { k++; w.image[0x40] = 0x83; w.image[0x47] = 0x01; };
     s.setPressureReadings(10); bool ok = s.updateMeasurements(Walrus::MS5803);
     printf("[dead MS5803] N=10: update=%d readings taken=%d pressureCount=%u pressure=%.2f note='%s'\n", ok, k, s.getPressureCount(), s.getPressure(), s.reportNote().c_str());
     onReading = nullptr; }
