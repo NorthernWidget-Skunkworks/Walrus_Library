@@ -47,6 +47,14 @@ static void installFirmwareEmulation() {
   };
 }
 
+// Print into a fixed buffer: the in-memory Print destination from the design.
+class BufferPrint : public Print {
+  char* _buf; size_t _cap, _len = 0;
+  public:
+  BufferPrint(char* buf, size_t cap) : _buf(buf), _cap(cap) { _buf[0] = 0; }
+  size_t write(uint8_t c) override { if (_len + 1 >= _cap) return 0; _buf[_len++] = c; _buf[_len] = 0; return 1; }
+};
+
 static void report(const char* name, Walrus& s) {
   printf("[%s]\n", name);
   printf("header: %s\n", s.getHeader().c_str());
@@ -76,6 +84,37 @@ int main() {
   loadImage(1013250, 2137, 405); Wire.image[0x20] = 0x00; Wire.onWrite = nullptr;
   { Walrus s; s.begin(); report("never ready", s); }
   installFirmwareEmulation();
+
+  // 5. begin() gates: wrong name, wrong schema, firmware too old, and the versions it reports.
+  loadImage(1013250, 2137, 405); Wire.image[0x01] = 'X';
+  { Walrus s; bool ok = s.begin(); printf("[wrong name] begin=%d failure=%s\n", ok, s.beginFailure().c_str()); }
+  loadImage(1013250, 2137, 405, 1, 0x00);
+  { Walrus s; bool ok = s.begin(); printf("[schema 0x00] begin=%d failure=%s\n", ok, s.beginFailure().c_str()); }
+  loadImage(1013250, 2137, 405, 0);
+  { Walrus s; bool ok = s.begin(); printf("[fw patch 0 < min %d] begin=%d fw=%u failure=%s\n", WALRUS_FW_MIN_PATCH, ok, s.getFirmwareVersion(), s.beginFailure().c_str()); }
+  loadImage(1013250, 2137, 405);
+  { Walrus s; bool ok = s.begin(); printf("[versions] begin=%d hw=%u.%u fw=%u failure=%s\n", ok, s.getHardwareMajor(), s.getHardwareMinor(), s.getFirmwareVersion(), s.beginFailure().c_str()); }
+
+  // 6. Faults: the MS5803 does not acknowledge (status bit 1, pan-fault, latched 0x01);
+  //    the MCP9808 value survives. Then a unit reset code with a clean status.
+  loadImage(1013250, 2137, 405);
+  { Walrus s; s.begin(); char pb[48];
+    onReading = [](TwoWire& w) { w.image[0x20] = 0x83; w.image[0x27] = 0x01; };
+    bool ok = s.updateMeasurements(); BufferPrint bp(pb, sizeof pb); s.printFault(bp);
+    printf("[MS5803 no ack] update=%d faulted(0)=%d faulted(1)=%d any=%d chip=%u kind=%u text='%s' note='%s'\n",
+           ok, s.faulted(0), s.faulted(1), s.anyFault(), s.faultChip(), s.faultKind(), pb, s.faultNote().c_str());
+    printf("[MS5803 no ack] string: %s\n", s.getString().c_str());
+    onReading = [](TwoWire& w) { w.image[0x20] = 0x01; w.image[0x27] = 0xE6; };
+    ok = s.updateMeasurements(); BufferPrint bp2(pb, sizeof pb); s.printFault(bp2);
+    printf("[unit reset] update=%d any=%d chip=%u kind=%u text='%s' note='%s'\n", ok, s.anyFault(), s.faultChip(), s.faultKind(), pb, s.faultNote().c_str());
+    onReading = nullptr; }
+
+  // 7. Handshake pieces and the cost of one row.
+  loadImage(1013250, 2137, 405);
+  { Walrus s; s.begin(); unsigned t0 = Wire.transactions;
+    bool req = s.requestReading(); bool nr = s.newReading(); bool rd = s.ready();
+    printf("[handshake] requestReading=%d newReading=%d ready=%d\n", req, nr, rd);
+    s.getString(); printf("[cost] requestFrom calls for one getString(): %u\n", Wire.transactions - t0 - 2); }
 
   fprintf(stderr, "bus transactions total: %u\n", Wire.transactions);   // metric, not output
   return 0;

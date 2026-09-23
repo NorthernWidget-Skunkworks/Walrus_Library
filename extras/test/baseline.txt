@@ -9,8 +9,17 @@ getters: pressure=1250.0000 tExt=-0.5000 tMS5803=-12.3400 default=-12.3400 newDa
 [device absent]
 header: Pressure [mBar],Temp DH [C],Temp DHt [C],
 string: -9999.00,-9999.00,-9999.00,
-getters: pressure=-9999.0000 tExt=-9999.0000 tMS5803=-9999.0000 default=-9999.0000 newData=1
+getters: pressure=-9999.0000 tExt=-9999.0000 tMS5803=-9999.0000 default=-9999.0000 newData=0
 [never ready]
 header: Pressure [mBar],Temp DH [C],Temp DHt [C],
-string: -9999.0,-9999.0,-9999.0,
-getters: pressure=1013.2500 tExt=4.0500 tMS5803=21.3700 default=21.3700 newData=0
+string: -9999.00,-9999.00,-9999.00,
+getters: pressure=-9999.0000 tExt=-9999.0000 tMS5803=-9999.0000 default=-9999.0000 newData=0
+[wrong name] begin=0 failure=WrongName
+[schema 0x00] begin=0 failure=NotSchema1
+[fw patch 0 < min 1] begin=0 fw=0 failure=OldFirmware
+[versions] begin=1 hw=0.2 fw=1 failure=None
+[MS5803 no ack] update=0 faulted(0)=1 faulted(1)=0 any=1 chip=0 kind=1 text='MS5803: no acknowledge' note='MS5803NoACK'
+[MS5803 no ack] string: -9999.00,4.05,-9999.00,
+[unit reset] update=1 any=0 chip=7 kind=6 text='unit: reset since configured' note='UnitReset'
+[handshake] requestReading=1 newReading=1 ready=1
+[cost] requestFrom calls for one getString(): 5
