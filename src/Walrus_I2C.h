@@ -30,9 +30,9 @@ Distributed as-is; no warranty is given.
   #define WALRUS_TEMPERATURE_CAPACITY 16   // MCP9808: external temperature
 #endif
 
-#define PRES_REG    0x28  // Schema 1 Page 1 Block 1: pressure, int32, µBar
-#define TEMP_MS5803 0x2C  // Schema 1 Page 1 Block 1: MS5803 temperature, int16, 0.01 °C
-#define TEMP_EXT    0x30  // Schema 1 Page 1 Block 2: external temperature (MCP9808), int16, 0.01 °C
+#define PRES_REG    0x48  // Schema 1 Page 2 Block 1: pressure, int32, µBar
+#define TEMP_MS5803 0x4C  // Schema 1 Page 2 Block 1: MS5803 temperature, int16, 0.01 °C
+#define TEMP_EXT    0x50  // Schema 1 Page 2 Block 2: external temperature (MCP9808), int16, 0.01 °C
 
 /**
  * @class Walrus: .
@@ -244,8 +244,8 @@ class Walrus
         NW_ReadingsConfig _pressureCfg;    //Readings per updateMeasurements() and stats columns, MS5803 group
         NW_ReadingsConfig _temperatureCfg; //MCP9808 group
         uint8_t _component = ALL;     //Selection of the current beginReadings() run
-        bool readMS5803(uint8_t* d);  //Append one served MS5803 reading (6 bytes from 0x28) unless faulted
-        bool readMCP9808(uint8_t* d); //Append one served MCP9808 reading (2 bytes from 0x30) unless faulted
+        bool readMS5803(uint8_t* d);  //Append one served MS5803 reading (6 bytes from 0x48) unless faulted
+        bool readMCP9808(uint8_t* d); //Append one served MCP9808 reading (2 bytes from 0x50) unless faulted
         void summarise(uint8_t component); //Means into the single-value fields, NW_ERROR when no reading
 };
 
