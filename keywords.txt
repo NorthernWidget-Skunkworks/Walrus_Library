@@ -14,6 +14,27 @@ Walrus	KEYWORD1
 
 begin	KEYWORD2
 updateMeasurements	KEYWORD2
+updatePressure	KEYWORD2
+updateTemperature	KEYWORD2
+setPressureReadings	KEYWORD2
+setTemperatureReadings	KEYWORD2
+setPressureStats	KEYWORD2
+setTemperatureStats	KEYWORD2
+getPressureCount	KEYWORD2
+getTemperatureCount	KEYWORD2
+getPressureMean	KEYWORD2
+getPressureStd	KEYWORD2
+getPressureSterr	KEYWORD2
+getPressureMedian	KEYWORD2
+getTemperatureMean	KEYWORD2
+getTemperatureStd	KEYWORD2
+getTemperatureSterr	KEYWORD2
+getTemperatureMedian	KEYWORD2
+printHeader	KEYWORD2
+printReading	KEYWORD2
+logReading	KEYWORD2
+beginReadings	KEYWORD2
+endReadings	KEYWORD2
 getPressure	KEYWORD2
 getTemperature	KEYWORD2
 getHeader	KEYWORD2
@@ -38,4 +59,9 @@ getFirmwareVersion	KEYWORD2
 #######################################
 
 DEFAULT_ADDRESS	LITERAL1
+ALL	LITERAL1
+MS5803	LITERAL1
+MCP9808	LITERAL1
+WALRUS_PRESSURE_CAPACITY	LITERAL1
+WALRUS_TEMPERATURE_CAPACITY	LITERAL1
 WALRUS_FW_MIN_PATCH	LITERAL1
