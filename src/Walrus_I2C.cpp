@@ -32,7 +32,7 @@ bool Walrus::updateMeasurements(uint8_t component)
         //One reading of everything: both chips in one trigger, one 10-byte read.
         _dev.resetBatch();
         uint8_t d[10];
-        if(_dev.takeReading(ALL) && _dev.readBytes(NW_REG_DATA, d, 10)) {
+        if(_dev.takeReading(ALL) && _dev.readData(NW_REG_DATA, d, 10)) {
             readMS5803(d);
             readMCP9808(d + 8);
         }
@@ -53,14 +53,14 @@ bool Walrus::updateMeasurements(uint8_t component)
 bool Walrus::updatePressure()
 {
     uint8_t d[6];
-    if(!_dev.takeReading(MS5803) || !_dev.readBytes(PRES_REG, d, 6)) return false;
+    if(!_dev.takeReading(MS5803) || !_dev.readData(PRES_REG, d, 6)) return false;
     return readMS5803(d);
 }
 
 bool Walrus::updateTemperature()
 {
     uint8_t d[2];
-    if(!_dev.takeReading(MCP9808) || !_dev.readBytes(TEMP_EXT, d, 2)) return false;
+    if(!_dev.takeReading(MCP9808) || !_dev.readData(TEMP_EXT, d, 2)) return false;
     return readMCP9808(d);
 }
 
