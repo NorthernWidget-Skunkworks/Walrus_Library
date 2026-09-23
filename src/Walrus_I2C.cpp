@@ -152,7 +152,7 @@ size_t Walrus::printReport(Print& out)
 size_t Walrus::printStatus(Print& out, bool boot)
 {
     static const char* const chips[] = {"MS5803", "MCP9808"};
-    return _dev.printSnapshot(out, chips, 2, boot);
+    return _dev.printSnapshot(out, chips, 2, boot, WALRUS_LIBRARY_VERSION, WALRUS_LIBRARY_COMMIT);
 }
 
 bool    Walrus::reportIsFault()   { return _dev.report().isFault(); }

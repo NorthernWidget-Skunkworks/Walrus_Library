@@ -20,6 +20,14 @@ Distributed as-is; no warranty is given.
 /// brought the Block 0 handshake (trigger, reading counter, faults).
 #define WALRUS_FW_MIN_PATCH 1
 
+// Build identity: this library's version (held equal to library.properties by
+// NW-Tests/version_check.py) and its build commit, set by the NW-Build wrapper from
+// git and blank in an Arduino IDE build. Both go into a logger's status file.
+#define WALRUS_LIBRARY_VERSION "0.2.0"
+#ifndef WALRUS_LIBRARY_COMMIT
+#define WALRUS_LIBRARY_COMMIT ""
+#endif
+
 // Readings per updateMeasurements() are kept in static arrays of this
 // capacity (one per chip group; no heap); set<Field>Readings(n) clamps to it.
 // Override before the include to trade RAM for a longer batch.
