@@ -28,7 +28,7 @@ bool Walrus::updateMeasurements(uint8_t component)
     bool doMS = component & MS5803, doMCP = component & MCP9808;
     if(doMS) { _pressureReadings.reset(); _tempMS5803Readings.reset(); }
     if(doMCP) _tempExtReadings.reset();
-    if(doMS && doMCP && _nPressureReadings <= 1 && _nTemperatureReadings <= 1) {
+    if(doMS && doMCP && _pressureCfg.n <= 1 && _temperatureCfg.n <= 1) {
         //One reading of everything: both chips in one trigger, one 10-byte read.
         _dev.resetBatch();
         uint8_t d[10];
@@ -40,8 +40,8 @@ bool Walrus::updateMeasurements(uint8_t component)
     else {
         //Per chip group: N readings each, appended to the arrays; a chip that
         //reports absent (no acknowledge / not initialised) stops its batch.
-        if(doMS) _dev.takeReadings(MS5803, _nPressureReadings, [this] { return updatePressure(); });
-        if(doMCP) _dev.takeReadings(MCP9808, _nTemperatureReadings, [this] { return updateTemperature(); });
+        if(doMS) _dev.takeReadings(MS5803, _pressureCfg.n, [this] { return updatePressure(); });
+        if(doMCP) _dev.takeReadings(MCP9808, _temperatureCfg.n, [this] { return updateTemperature(); });
     }
     summarise(component);
     bool ok = true;
@@ -92,20 +92,10 @@ void Walrus::summarise(uint8_t component)
     }
 }
 
-uint16_t Walrus::setPressureReadings(uint16_t n)
-{
-    _nPressureReadings = (n > WALRUS_PRESSURE_CAPACITY) ? WALRUS_PRESSURE_CAPACITY : n;
-    return _nPressureReadings;
-}
-
-uint16_t Walrus::setTemperatureReadings(uint16_t n)
-{
-    _nTemperatureReadings = (n > WALRUS_TEMPERATURE_CAPACITY) ? WALRUS_TEMPERATURE_CAPACITY : n;
-    return _nTemperatureReadings;
-}
-
-void     Walrus::setPressureStats(bool enable)    { _pressureStats = enable; }
-void     Walrus::setTemperatureStats(bool enable) { _temperatureStats = enable; }
+uint16_t Walrus::setPressureReadings(uint16_t n)    { return _pressureCfg.set(n, WALRUS_PRESSURE_CAPACITY); }
+uint16_t Walrus::setTemperatureReadings(uint16_t n) { return _temperatureCfg.set(n, WALRUS_TEMPERATURE_CAPACITY); }
+void     Walrus::setPressureStats(bool enable)      { _pressureCfg.stats = enable; }
+void     Walrus::setTemperatureStats(bool enable)   { _temperatureCfg.stats = enable; }
 uint16_t Walrus::getPressureCount()               { return _pressureReadings.count(); }
 uint16_t Walrus::getTemperatureCount()            { return _tempExtReadings.count(); }
 
@@ -169,11 +159,11 @@ String Walrus::faultNote()
 String Walrus::getHeader()
 {
     String h = "Pressure [mBar],"; //return header string
-    if(_pressureStats && _nPressureReadings > 1) h += "Pressure std [mBar],Pressure sterr [mBar],";
+    if(_pressureCfg.columns()) h += "Pressure std [mBar],Pressure sterr [mBar],";
     h += "Temp DH [C],";
-    if(_temperatureStats && _nTemperatureReadings > 1) h += "Temp DH std [C],Temp DH sterr [C],";
+    if(_temperatureCfg.columns()) h += "Temp DH std [C],Temp DH sterr [C],";
     h += "Temp DHt [C],";
-    if(_pressureStats && _nPressureReadings > 1) h += "Temp DHt std [C],Temp DHt sterr [C],";
+    if(_pressureCfg.columns()) h += "Temp DHt std [C],Temp DHt sterr [C],";
     return h;
 }
 
@@ -181,11 +171,11 @@ String Walrus::getString()
 {
     updateMeasurements();                           //NW_ERROR (-9999) where a reading failed
     String s = String(getPressure()) + ",";
-    if(_pressureStats && _nPressureReadings > 1) s += String(getPressureStd()) + "," + String(getPressureSterr()) + ",";
+    if(_pressureCfg.columns()) s += String(getPressureStd()) + "," + String(getPressureSterr()) + ",";
     s += String(getTemperature(0)) + ",";
-    if(_temperatureStats && _nTemperatureReadings > 1) s += String(getTemperatureStd(0)) + "," + String(getTemperatureSterr(0)) + ",";
+    if(_temperatureCfg.columns()) s += String(getTemperatureStd(0)) + "," + String(getTemperatureSterr(0)) + ",";
     s += String(getTemperature(1)) + ",";
-    if(_pressureStats && _nPressureReadings > 1) s += String(getTemperatureStd(1)) + "," + String(getTemperatureSterr(1)) + ",";
+    if(_pressureCfg.columns()) s += String(getTemperatureStd(1)) + "," + String(getTemperatureSterr(1)) + ",";
     return s;
 }
 

@@ -239,10 +239,8 @@ class Walrus
         NW_Readings<int32_t, WALRUS_PRESSURE_CAPACITY>    _pressureReadings;   //uBar
         NW_Readings<int16_t, WALRUS_PRESSURE_CAPACITY>    _tempMS5803Readings; //0.01 C
         NW_Readings<int16_t, WALRUS_TEMPERATURE_CAPACITY> _tempExtReadings;    //0.01 C
-        uint16_t _nPressureReadings = 1;
-        uint16_t _nTemperatureReadings = 1;
-        bool _pressureStats = false;
-        bool _temperatureStats = false;
+        NW_ReadingsConfig _pressureCfg;    //Readings per updateMeasurements() and stats columns, MS5803 group
+        NW_ReadingsConfig _temperatureCfg; //MCP9808 group
         uint8_t _component = ALL;     //Selection of the current beginReadings() run
         bool readMS5803(uint8_t* d);  //Append one served MS5803 reading (6 bytes from 0x28) unless faulted
         bool readMCP9808(uint8_t* d); //Append one served MCP9808 reading (2 bytes from 0x30) unless faulted
