@@ -40,18 +40,8 @@ bool Walrus::updateMeasurements(uint8_t component)
     else {
         //Per chip group: N readings each, appended to the arrays; a chip that
         //reports absent (no acknowledge / not initialised) stops its batch.
-        if(doMS) {
-            _dev.beginBatch(_nPressureReadings);
-            for(uint16_t i = 0; i < _nPressureReadings; i++) {
-                if(!updatePressure() && _dev.batchFaulted(MS5803)) break;
-            }
-        }
-        if(doMCP) {
-            _dev.beginBatch(_nTemperatureReadings);
-            for(uint16_t i = 0; i < _nTemperatureReadings; i++) {
-                if(!updateTemperature() && _dev.batchFaulted(MCP9808)) break;
-            }
-        }
+        if(doMS) _dev.takeReadings(MS5803, _nPressureReadings, [this] { return updatePressure(); });
+        if(doMCP) _dev.takeReadings(MCP9808, _nTemperatureReadings, [this] { return updateTemperature(); });
     }
     summarise(component);
     bool ok = true;
