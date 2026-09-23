@@ -135,25 +135,25 @@ bool    Walrus::newReading()       { return _dev.newReading(); }
 bool    Walrus::requestReading()   { return _dev.requestReading(0x03); }
 bool    Walrus::faulted(uint8_t chip) { return _dev.faulted(chip); }
 bool    Walrus::anyFault()         { return _dev.anyFault(); }
-uint8_t Walrus::faultChip()        { return _dev.faultChip(); }
-uint8_t Walrus::faultKind()        { return _dev.faultKind(); }
+uint8_t Walrus::reportChip()        { return _dev.reportChip(); }
+uint8_t Walrus::reportKind()        { return _dev.reportKind(); }
 String  Walrus::beginFailure()     { return _dev.beginFailure(); }
 uint8_t Walrus::getHardwareMajor() { return _dev.hardwareMajor(); }
 uint8_t Walrus::getHardwareMinor() { return _dev.hardwareMinor(); }
 uint8_t Walrus::getFirmwareVersion() { return _dev.firmwareVersion(); }
 
-size_t Walrus::printFault(Print& out)
+size_t Walrus::printReport(Print& out)
 {
-    //The chip names are Walrus's own (the spec's chip table); NW_Fault prints the rest.
+    //The chip names are Walrus's own (the spec's chip table); NW_Report prints the rest.
     static const char* const chips[] = {"MS5803", "MCP9808"};
-    return _dev.fault().print(out, chips, 2);
+    return _dev.report().print(out, chips, 2);
 }
 
-String Walrus::faultNote()
+String Walrus::reportNote()
 {
     //One word for a data-table note: the chip, then the kind ("MS5803NoACK").
     static const char* const chips[] = {"MS5803", "MCP9808"};
-    return _dev.fault().note(chips, 2);
+    return _dev.report().note(chips, 2);
 }
 
 String Walrus::getHeader()

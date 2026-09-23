@@ -65,13 +65,13 @@ int main() {
   loadImage(1013250, 2137, 405);
   { Walrus s; s.begin(); char pb[48];
     onReading = [](TwoWire& w) { w.image[0x20] = 0x83; w.image[0x27] = 0x01; };
-    bool ok = s.updateMeasurements(); BufferPrint bp(pb, sizeof pb); s.printFault(bp);
+    bool ok = s.updateMeasurements(); BufferPrint bp(pb, sizeof pb); s.printReport(bp);
     printf("[MS5803 no ack] update=%d faulted(0)=%d faulted(1)=%d any=%d chip=%u kind=%u text='%s' note='%s'\n",
-           ok, s.faulted(0), s.faulted(1), s.anyFault(), s.faultChip(), s.faultKind(), pb, s.faultNote().c_str());
+           ok, s.faulted(0), s.faulted(1), s.anyFault(), s.reportChip(), s.reportKind(), pb, s.reportNote().c_str());
     printf("[MS5803 no ack] string: %s\n", s.getString().c_str());
     onReading = [](TwoWire& w) { w.image[0x20] = 0x01; w.image[0x27] = 0xE6; };
-    ok = s.updateMeasurements(); BufferPrint bp2(pb, sizeof pb); s.printFault(bp2);
-    printf("[unit reset] update=%d any=%d chip=%u kind=%u text='%s' note='%s'\n", ok, s.anyFault(), s.faultChip(), s.faultKind(), pb, s.faultNote().c_str());
+    ok = s.updateMeasurements(); BufferPrint bp2(pb, sizeof pb); s.printReport(bp2);
+    printf("[unit reset] update=%d any=%d chip=%u kind=%u text='%s' note='%s'\n", ok, s.anyFault(), s.reportChip(), s.reportKind(), pb, s.reportNote().c_str());
     onReading = nullptr; }
 
   // 7. Handshake pieces and the cost of one row.
@@ -124,7 +124,7 @@ int main() {
   { Walrus s; s.begin(); int k = 0;
     onReading = [&](TwoWire& w) { k++; w.image[0x20] = 0x83; w.image[0x27] = 0x01; };
     s.setPressureReadings(10); bool ok = s.updateMeasurements(Walrus::MS5803);
-    printf("[dead MS5803] N=10: update=%d readings taken=%d pressureCount=%u pressure=%.2f note='%s'\n", ok, k, s.getPressureCount(), s.getPressure(), s.faultNote().c_str());
+    printf("[dead MS5803] N=10: update=%d readings taken=%d pressureCount=%u pressure=%.2f note='%s'\n", ok, k, s.getPressureCount(), s.getPressure(), s.reportNote().c_str());
     onReading = nullptr; }
 
   fprintf(stderr, "bus transactions total: %u\n", Wire.transactions);   // metric, not output

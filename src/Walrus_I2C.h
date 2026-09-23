@@ -14,7 +14,7 @@ Distributed as-is; no warranty is given.
 #define Walrus_I2C_h
 
 #include <Arduino.h>
-#include <NW_Core.h>   // NW_Core: NW_Device (Schema 1 protocol), NW_Fault
+#include <NW_Core.h>   // NW_Core: NW_Device (Schema 1 protocol), NW_Report
 
 /// Lowest firmware patch (Page 0 byte 0x0A) this library accepts: patch 1
 /// brought the Block 0 handshake (trigger, reading counter, faults).
@@ -211,19 +211,19 @@ class Walrus
         /** @brief Trigger a reading of both chips without waiting for it. */
         bool requestReading();
 
-        // --- Faults (status byte, live; fault byte, latched) ---
+        // --- Faults (status byte, live; Report register, latched) ---
         /** @brief True if the given chip (0 = MS5803, 1 = MCP9808) was faulted in the last reading. */
         bool faulted(uint8_t chip);
         /** @brief True if any chip was faulted in the last reading (status pan-fault bit). */
         bool anyFault();
-        /** @brief Chip index of the latched fault (0 MS5803, 1 MCP9808, 7 the unit); meaningful when faultKind() != 0. */
-        uint8_t faultChip();
-        /** @brief Kind of the latched fault, per the spec's table (1 no acknowledge, 6 reset since configured, ...). */
-        uint8_t faultKind();
-        /** @brief Print the latched fault as text, e.g. "MS5803: no acknowledge"; "none" when there is no fault. */
-        size_t printFault(Print& out);
-        /** @brief The latched fault as one word for a note column: "MS5803NoACK", "UnitReset"; "UnitNone" when none. */
-        String faultNote();
+        /** @brief Chip index of the report (0 MS5803, 1 MCP9808, 7 the unit); meaningful when reportKind() != 0. */
+        uint8_t reportChip();
+        /** @brief Kind of the report, per the spec's table (1 no acknowledge, 6 reset since configured, ...). */
+        uint8_t reportKind();
+        /** @brief Print the report as text, e.g. "MS5803: no acknowledge"; "none" when there is no fault. */
+        size_t printReport(Print& out);
+        /** @brief The report as one word for a note column: "MS5803NoACK", "UnitReset"; "UnitNone" when none. */
+        String reportNote();
         /** @brief Why the last begin() refused, as one word: "NoACK", "NotSchema1", "WrongName", "OldFirmware"; "None" after success. */
         String beginFailure();
         uint8_t getHardwareMajor();
