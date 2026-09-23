@@ -84,11 +84,11 @@ void Walrus::summarise(uint8_t component)
 {
     //Means over the readings taken, scaled from the register units; NW_ERROR when none.
     if(component & MS5803) {
-        _pressure   = _pressureReadings.count()   ? _pressureReadings.mean() / 1000.0   : NW_ERROR;
-        _tempMS5803 = _tempMS5803Readings.count() ? _tempMS5803Readings.mean() / 100.0  : NW_ERROR;
+        _pressure   = nwScaled(_pressureReadings.mean(),   1000.0);
+        _tempMS5803 = nwScaled(_tempMS5803Readings.mean(), 100.0);
     }
     if(component & MCP9808) {
-        _tempExt = _tempExtReadings.count() ? _tempExtReadings.mean() / 100.0 : NW_ERROR;
+        _tempExt = nwScaled(_tempExtReadings.mean(), 100.0);
     }
 }
 
@@ -111,15 +111,14 @@ uint16_t Walrus::getTemperatureCount()            { return _tempExtReadings.coun
 
 //Statistics are computed from the arrays each call (NW_Readings), in the
 //register units, then scaled: uBar -> mBar, 0.01 C -> C. NW_ERROR when empty.
-static float scaled(float v, float divisor) { return (v == NW_ERROR) ? NW_ERROR : v / divisor; }
-float Walrus::getPressureMean()   { return scaled(_pressureReadings.mean(),   1000.0); }
-float Walrus::getPressureStd()    { return scaled(_pressureReadings.std(),    1000.0); }
-float Walrus::getPressureSterr()  { return scaled(_pressureReadings.sterr(),  1000.0); }
-float Walrus::getPressureMedian() { return scaled(_pressureReadings.median(), 1000.0); }
-float Walrus::getTemperatureMean(uint8_t Location)   { return scaled(Location == 0 ? _tempExtReadings.mean()   : _tempMS5803Readings.mean(),   100.0); }
-float Walrus::getTemperatureStd(uint8_t Location)    { return scaled(Location == 0 ? _tempExtReadings.std()    : _tempMS5803Readings.std(),    100.0); }
-float Walrus::getTemperatureSterr(uint8_t Location)  { return scaled(Location == 0 ? _tempExtReadings.sterr()  : _tempMS5803Readings.sterr(),  100.0); }
-float Walrus::getTemperatureMedian(uint8_t Location) { return scaled(Location == 0 ? _tempExtReadings.median() : _tempMS5803Readings.median(), 100.0); }
+float Walrus::getPressureMean()   { return nwScaled(_pressureReadings.mean(),   1000.0); }
+float Walrus::getPressureStd()    { return nwScaled(_pressureReadings.std(),    1000.0); }
+float Walrus::getPressureSterr()  { return nwScaled(_pressureReadings.sterr(),  1000.0); }
+float Walrus::getPressureMedian() { return nwScaled(_pressureReadings.median(), 1000.0); }
+float Walrus::getTemperatureMean(uint8_t Location)   { return nwScaled(Location == 0 ? _tempExtReadings.mean()   : _tempMS5803Readings.mean(),   100.0); }
+float Walrus::getTemperatureStd(uint8_t Location)    { return nwScaled(Location == 0 ? _tempExtReadings.std()    : _tempMS5803Readings.std(),    100.0); }
+float Walrus::getTemperatureSterr(uint8_t Location)  { return nwScaled(Location == 0 ? _tempExtReadings.sterr()  : _tempMS5803Readings.sterr(),  100.0); }
+float Walrus::getTemperatureMedian(uint8_t Location) { return nwScaled(Location == 0 ? _tempExtReadings.median() : _tempMS5803Readings.median(), 100.0); }
 
 float Walrus::getTemperature(uint8_t Location) //Returns temp in C from either subsensor
 {
@@ -224,19 +223,15 @@ size_t Walrus::logReading(Print& out)
 {
     //One acquisition per chip group selected, then the values just taken.
     if(_component & MS5803) {
-        uint8_t d[6];
         _pressure = _tempMS5803 = NW_ERROR;
-        if(_dev.takeReading(MS5803) && _dev.readBytes(PRES_REG, d, 6) && readMS5803(d)) {
+        if(updatePressure()) {
             _pressure = _pressureReadings.last() / 1000.0;
             _tempMS5803 = _tempMS5803Readings.last() / 100.0;
         }
     }
     if(_component & MCP9808) {
-        uint8_t d[2];
         _tempExt = NW_ERROR;
-        if(_dev.takeReading(MCP9808) && _dev.readBytes(TEMP_EXT, d, 2) && readMCP9808(d)) {
-            _tempExt = _tempExtReadings.last() / 100.0;
-        }
+        if(updateTemperature()) _tempExt = _tempExtReadings.last() / 100.0;
     }
     return printReading(out);
 }
