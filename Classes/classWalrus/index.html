@@ -225,13 +225,30 @@
           <aside class="sidebar__right sticky">
             <nav class="toc" aria-label="Table of contents">
               <header><h4 class="nav__title"><i class="fas fa-file-alt"></i> On this page</h4></header>
-              <ul class="toc__menu"><li><a href="#public-functions">Public Functions</a></li><li><a href="#public-attributes">Public Attributes</a></li><li><a href="#detailed-description">Detailed Description</a><ul><li><a href="#function-begin">function begin</a></li><li><a href="#function-updatemeasurements">function updateMeasurements</a></li><li><a href="#function-gettemperature">function getTemperature</a></li><li><a href="#function-gettemperature-1">function getTemperature</a></li><li><a href="#function-getpressure">function getPressure</a></li><li><a href="#function-getheader">function getHeader</a></li><li><a href="#function-getstring">function getString</a></li><li><a href="#function-newdata">function newData</a></li><li><a href="#function-ready">function ready</a></li><li><a href="#function-newreading">function newReading</a></li><li><a href="#function-requestreading">function requestReading</a></li><li><a href="#function-faulted">function faulted</a></li><li><a href="#function-anyfault">function anyFault</a></li><li><a href="#function-faultchip">function faultChip</a></li><li><a href="#function-faultkind">function faultKind</a></li><li><a href="#function-printfault">function printFault</a></li><li><a href="#function-faultnote">function faultNote</a></li><li><a href="#function-beginfailure">function beginFailure</a></li><li><a href="#function-gethardwaremajor">function getHardwareMajor</a></li><li><a href="#function-gethardwareminor">function getHardwareMinor</a></li><li><a href="#function-getfirmwareversion">function getFirmwareVersion</a></li></ul></li><li><a href="#public-attributes-documentation">Public Attributes Documentation</a><ul><li><a href="#variable-default_address">variable DEFAULT_ADDRESS</a></li></ul></li></ul>
+              <ul class="toc__menu"><li><a href="#public-types">Public Types</a></li><li><a href="#public-functions">Public Functions</a></li><li><a href="#public-attributes">Public Attributes</a></li><li><a href="#detailed-description">Detailed Description</a><ul><li><a href="#function-begin">function begin</a></li><li><a href="#function-updatemeasurements">function updateMeasurements</a></li><li><a href="#function-updatepressure">function updatePressure</a></li><li><a href="#function-updatetemperature">function updateTemperature</a></li><li><a href="#function-setpressurereadings">function setPressureReadings</a></li><li><a href="#function-settemperaturereadings">function setTemperatureReadings</a></li><li><a href="#function-setpressurestats">function setPressureStats</a></li><li><a href="#function-settemperaturestats">function setTemperatureStats</a></li><li><a href="#function-getpressurecount">function getPressureCount</a></li><li><a href="#function-gettemperaturecount">function getTemperatureCount</a></li><li><a href="#function-gettemperature">function getTemperature</a></li><li><a href="#function-gettemperature-1">function getTemperature</a></li><li><a href="#function-getpressure">function getPressure</a></li><li><a href="#function-getpressuremean">function getPressureMean</a></li><li><a href="#function-getpressurestd">function getPressureStd</a></li><li><a href="#function-getpressuresterr">function getPressureSterr</a></li><li><a href="#function-getpressuremedian">function getPressureMedian</a></li><li><a href="#function-gettemperaturemean">function getTemperatureMean</a></li><li><a href="#function-gettemperaturestd">function getTemperatureStd</a></li><li><a href="#function-gettemperaturesterr">function getTemperatureSterr</a></li><li><a href="#function-gettemperaturemedian">function getTemperatureMedian</a></li><li><a href="#function-getheader">function getHeader</a></li><li><a href="#function-getstring">function getString</a></li><li><a href="#function-printheader">function printHeader</a></li><li><a href="#function-printreading">function printReading</a></li><li><a href="#function-logreading">function logReading</a></li><li><a href="#function-beginreadings">function beginReadings</a></li><li><a href="#function-endreadings">function endReadings</a></li><li><a href="#function-newdata">function newData</a></li><li><a href="#function-ready">function ready</a></li><li><a href="#function-newreading">function newReading</a></li><li><a href="#function-requestreading">function requestReading</a></li><li><a href="#function-faulted">function faulted</a></li><li><a href="#function-anyfault">function anyFault</a></li><li><a href="#function-faultchip">function faultChip</a></li><li><a href="#function-faultkind">function faultKind</a></li><li><a href="#function-printfault">function printFault</a></li><li><a href="#function-faultnote">function faultNote</a></li><li><a href="#function-beginfailure">function beginFailure</a></li><li><a href="#function-gethardwaremajor">function getHardwareMajor</a></li><li><a href="#function-gethardwareminor">function getHardwareMinor</a></li><li><a href="#function-getfirmwareversion">function getFirmwareVersion</a></li></ul></li><li><a href="#public-attributes-documentation">Public Attributes Documentation</a><ul><li><a href="#variable-default_address">variable DEFAULT_ADDRESS</a></li></ul></li></ul>
             </nav>
           </aside>
         
         <p>Class to interface with the <a href="">Walrus</a> submersible temperature and pressure sensor.  <a href="#detailed-description">More…</a></p>
 
 <p><code class="language-plaintext highlighter-rouge">#include &lt;Walrus_I2C.h&gt;</code></p>
+
+<h2 id="public-types">Public Types</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>enum uint8_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#enum-component">Component</a></strong> { MS5803 = 0x01, MCP9808 = 0x02, ALL = 0x03}<br />Chip groups a reading can cover (the spec’s chip table: 0 MS5803, 1 MCP9808).</td>
+    </tr>
+  </tbody>
+</table>
 
 <h2 id="public-functions">Public Functions</h2>
 
@@ -253,7 +270,39 @@
     </tr>
     <tr>
       <td>bool</td>
-      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements</a></strong>()<br />Take one reading of both chips and store it for the getters.</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements</a></strong>(uint8_t component =ALL)<br />Take the configured number of readings of the selected chips and store them for the getters and the statistics.</td>
+    </tr>
+    <tr>
+      <td>bool</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-updatepressure">updatePressure</a></strong>()<br />Take ONE reading of the MS5803 (pressure and its temperature) and append it to the readings.</td>
+    </tr>
+    <tr>
+      <td>bool</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-updatetemperature">updateTemperature</a></strong>()<br />Take ONE reading of the MCP9808 (external temperature) and append it to the readings.</td>
+    </tr>
+    <tr>
+      <td>uint16_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-setpressurereadings">setPressureReadings</a></strong>(uint16_t n)<br />Set how many MS5803 readings <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a> takes (statistics are computed over them). Clamped to WALRUS_PRESSURE_CAPACITY.</td>
+    </tr>
+    <tr>
+      <td>uint16_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-settemperaturereadings">setTemperatureReadings</a></strong>(uint16_t n)<br />Set how many MCP9808 readings <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a> takes. Clamped to WALRUS_TEMPERATURE_CAPACITY.</td>
+    </tr>
+    <tr>
+      <td>void</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-setpressurestats">setPressureStats</a></strong>(bool enable)<br />Enable or disable pressure and MS5803-temperature std and sterr columns in <a href="">getString()</a>/getHeader().</td>
+    </tr>
+    <tr>
+      <td>void</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-settemperaturestats">setTemperatureStats</a></strong>(bool enable)<br />Enable or disable external-temperature std and sterr columns in <a href="">getString()</a>/getHeader().</td>
+    </tr>
+    <tr>
+      <td>uint16_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getpressurecount">getPressureCount</a></strong>()<br />Number of valid MS5803 readings stored by the last <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a>.</td>
+    </tr>
+    <tr>
+      <td>uint16_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-gettemperaturecount">getTemperatureCount</a></strong>()<br />Number of valid MCP9808 readings stored by the last <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a>.</td>
     </tr>
     <tr>
       <td>float</td>
@@ -268,12 +317,64 @@
       <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getpressure">getPressure</a></strong>()<br />Return calculated pressure from sensor [mBar].</td>
     </tr>
     <tr>
+      <td>float</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getpressuremean">getPressureMean</a></strong>()<br />Pressure mean [mBar] over the stored readings (NW_ERROR when none).</td>
+    </tr>
+    <tr>
+      <td>float</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getpressurestd">getPressureStd</a></strong>()<br />Pressure standard deviation [mBar].</td>
+    </tr>
+    <tr>
+      <td>float</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getpressuresterr">getPressureSterr</a></strong>()<br />Pressure standard error [mBar].</td>
+    </tr>
+    <tr>
+      <td>float</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getpressuremedian">getPressureMedian</a></strong>()<br />Pressure median [mBar] (mean of the middle pair for even N).</td>
+    </tr>
+    <tr>
+      <td>float</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-gettemperaturemean">getTemperatureMean</a></strong>(uint8_t Location)<br />Temperature mean [C] over the stored readings; Location 0 = MCP9808, 1 = MS5803.</td>
+    </tr>
+    <tr>
+      <td>float</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-gettemperaturestd">getTemperatureStd</a></strong>(uint8_t Location)<br />Temperature standard deviation [C]; Location as <a href="/Walrus_Library/Classes/classWalrus/#function-gettemperature">getTemperature()</a>.</td>
+    </tr>
+    <tr>
+      <td>float</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-gettemperaturesterr">getTemperatureSterr</a></strong>(uint8_t Location)<br />Temperature standard error [C]; Location as <a href="/Walrus_Library/Classes/classWalrus/#function-gettemperature">getTemperature()</a>.</td>
+    </tr>
+    <tr>
+      <td>float</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-gettemperaturemedian">getTemperatureMedian</a></strong>(uint8_t Location)<br />Temperature median [C]; Location as <a href="/Walrus_Library/Classes/classWalrus/#function-gettemperature">getTemperature()</a>.</td>
+    </tr>
+    <tr>
       <td>String</td>
       <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getheader">getHeader</a></strong>()<br />Return header.</td>
     </tr>
     <tr>
       <td>String</td>
       <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-getstring">getString</a></strong>()<br />Take a reading (<a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a>) and return it as a string.</td>
+    </tr>
+    <tr>
+      <td>size_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-printheader">printHeader</a></strong>(Print &amp; out)<br />Print the header matching <a href="">printReading()</a>: column names with units, each followed by a comma, for the chips selected by <a href="">beginReadings()</a>. No statistics columns: one reading has none.</td>
+    </tr>
+    <tr>
+      <td>size_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-printreading">printReading</a></strong>(Print &amp; out)<br />Print the stored reading of the selected chips, each value followed by a comma. Does not acquire: call <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a> first, or use <a href="">logReading()</a>. Writes: pressure [mBar], MS5803 temperature [C] for MS5803; external temperature [C] for MCP9808.</td>
+    </tr>
+    <tr>
+      <td>size_t</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-logreading">logReading</a></strong>(Print &amp; out)<br />Take ONE reading of the selected chips and print it: the one-reading primitive for collecting many readings to a file.</td>
+    </tr>
+    <tr>
+      <td>void</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-beginreadings">beginReadings</a></strong>(uint8_t component =ALL, uint16_t n =0)<br />Begin a run of readings, selecting which chips they cover.</td>
+    </tr>
+    <tr>
+      <td>void</td>
+      <td><strong><a href="/Walrus_Library/Classes/classWalrus/#function-endreadings">endReadings</a></strong>()<br />End a run of readings.</td>
     </tr>
     <tr>
       <td>bool</td>
@@ -362,6 +463,20 @@
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[![DOI](https://zenodo.org/badge/219609527.svg)](https://zenodo.org/badge/latestdoi/219609527) ```
 
+## Public Types Documentation
+
+### enum Component
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| MS5803 | 0x01| pressure and the MS5803's own temperature   |
+| MCP9808 | 0x02| external (water) temperature   |
+| ALL | 0x03|   |
+
+
+
+Chip groups a reading can cover (the spec's chip table: 0 MS5803, 1 MCP9808). 
+
 ## Public Functions Documentation
 
 ### function Walrus
@@ -393,14 +508,88 @@ Walrus()
 
 <h3 id="function-updatemeasurements">function updateMeasurements</h3>
 
-<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">updateMeasurements</span><span class="p">()</span>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">updateMeasurements</span><span class="p">(</span>
+    <span class="kt">uint8_t</span> <span class="n">component</span> <span class="o">=</span><span class="n">ALL</span>
+<span class="p">)</span>
 </code></pre></div></div>
 
-<p>Take one reading of both chips and store it for the getters.</p>
+<p>Take the configured number of readings of the selected chips and store them for the getters and the statistics.</p>
 
-<p><strong>Return</strong>: true if the device answered and no chip faulted</p>
+<p><strong>Parameters</strong>:</p>
 
-<p>Triggers the device, waits for its reading counter to advance, then reads pressure and both temperatures in one transaction. A chip the device reports faulted leaves its values at NW_ERROR (-9999).</p>
+<ul>
+  <li><strong>component</strong> Walrus::ALL (default), <a href="/Walrus_Library/Classes/classWalrus/#enumvalue-ms5803">Walrus::MS5803</a> or <a href="/Walrus_Library/Classes/classWalrus/#enumvalue-mcp9808">Walrus::MCP9808</a>.</li>
+</ul>
+
+<p><strong>Return</strong>: true if every selected chip gave at least one valid reading</p>
+
+<p>Each reading triggers the device and waits for its reading counter to advance (NW-Device-Specification handshake); N &gt; 1 is declared to the device as a batch first. The single-value getters return the mean of the readings taken; a chip the device reports faulted leaves its values at NW_ERROR (-9999). With one reading of ALL, both chips are read in a single transaction.</p>
+
+<h3 id="function-updatepressure">function updatePressure</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">updatePressure</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Take ONE reading of the MS5803 (pressure and its temperature) and append it to the readings.</p>
+
+<h3 id="function-updatetemperature">function updateTemperature</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="n">updateTemperature</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Take ONE reading of the MCP9808 (external temperature) and append it to the readings.</p>
+
+<h3 id="function-setpressurereadings">function setPressureReadings</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint16_t</span> <span class="n">setPressureReadings</span><span class="p">(</span>
+    <span class="kt">uint16_t</span> <span class="n">n</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Set how many MS5803 readings <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a> takes (statistics are computed over them). Clamped to WALRUS_PRESSURE_CAPACITY.</p>
+
+<p><strong>Return</strong>: The number actually set.</p>
+
+<h3 id="function-settemperaturereadings">function setTemperatureReadings</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint16_t</span> <span class="n">setTemperatureReadings</span><span class="p">(</span>
+    <span class="kt">uint16_t</span> <span class="n">n</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Set how many MCP9808 readings <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a> takes. Clamped to WALRUS_TEMPERATURE_CAPACITY.</p>
+
+<h3 id="function-setpressurestats">function setPressureStats</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">setPressureStats</span><span class="p">(</span>
+    <span class="kt">bool</span> <span class="n">enable</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Enable or disable pressure and MS5803-temperature std and sterr columns in <a href="">getString()</a>/getHeader().</p>
+
+<h3 id="function-settemperaturestats">function setTemperatureStats</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">setTemperatureStats</span><span class="p">(</span>
+    <span class="kt">bool</span> <span class="n">enable</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Enable or disable external-temperature std and sterr columns in <a href="">getString()</a>/getHeader().</p>
+
+<h3 id="function-getpressurecount">function getPressureCount</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint16_t</span> <span class="n">getPressureCount</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Number of valid MS5803 readings stored by the last <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a>.</p>
+
+<h3 id="function-gettemperaturecount">function getTemperatureCount</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint16_t</span> <span class="n">getTemperatureCount</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Number of valid MCP9808 readings stored by the last <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a>.</p>
 
 <h3 id="function-gettemperature">function getTemperature</h3>
 
@@ -433,7 +622,71 @@ Walrus()
 
 <p>Return calculated pressure from sensor [mBar].</p>
 
-<p>This is the MS5803 sensor, which can come in a variety of different pressure ranges and sensitivities.</p>
+<p>This is the MS5803 sensor, which can come in a variety of different pressure ranges and sensitivities. The mean of the readings stored by the last <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a>.</p>
+
+<h3 id="function-getpressuremean">function getPressureMean</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">float</span> <span class="n">getPressureMean</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Pressure mean [mBar] over the stored readings (NW_ERROR when none).</p>
+
+<h3 id="function-getpressurestd">function getPressureStd</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">float</span> <span class="n">getPressureStd</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Pressure standard deviation [mBar].</p>
+
+<h3 id="function-getpressuresterr">function getPressureSterr</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">float</span> <span class="n">getPressureSterr</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Pressure standard error [mBar].</p>
+
+<h3 id="function-getpressuremedian">function getPressureMedian</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">float</span> <span class="n">getPressureMedian</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Pressure median [mBar] (mean of the middle pair for even N).</p>
+
+<h3 id="function-gettemperaturemean">function getTemperatureMean</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">float</span> <span class="n">getTemperatureMean</span><span class="p">(</span>
+    <span class="kt">uint8_t</span> <span class="n">Location</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Temperature mean [C] over the stored readings; Location 0 = MCP9808, 1 = MS5803.</p>
+
+<h3 id="function-gettemperaturestd">function getTemperatureStd</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">float</span> <span class="n">getTemperatureStd</span><span class="p">(</span>
+    <span class="kt">uint8_t</span> <span class="n">Location</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Temperature standard deviation [C]; Location as <a href="/Walrus_Library/Classes/classWalrus/#function-gettemperature">getTemperature()</a>.</p>
+
+<h3 id="function-gettemperaturesterr">function getTemperatureSterr</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">float</span> <span class="n">getTemperatureSterr</span><span class="p">(</span>
+    <span class="kt">uint8_t</span> <span class="n">Location</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Temperature standard error [C]; Location as <a href="/Walrus_Library/Classes/classWalrus/#function-gettemperature">getTemperature()</a>.</p>
+
+<h3 id="function-gettemperaturemedian">function getTemperatureMedian</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">float</span> <span class="n">getTemperatureMedian</span><span class="p">(</span>
+    <span class="kt">uint8_t</span> <span class="n">Location</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Temperature median [C]; Location as <a href="/Walrus_Library/Classes/classWalrus/#function-gettemperature">getTemperature()</a>.</p>
 
 <h3 id="function-getheader">function getHeader</h3>
 
@@ -442,7 +695,7 @@ Walrus()
 
 <p>Return header.</p>
 
-<p>“Pressure [mBar],Temp DH [C],Temp DHt [C],”</p>
+<p>“Pressure [mBar],Temp DH [C],Temp DHt [C],” with std and sterr columns after a value when its statistics are enabled and more than one reading is configured.</p>
 
 <h3 id="function-getstring">function getString</h3>
 
@@ -454,8 +707,71 @@ Walrus()
 <p>String(getPressure()) + “,” + String(getTemperature(0))</p>
 
 <ul>
-  <li>”,” + String(getTemperature(1)) + “,”;</li>
+  <li>”,” + String(getTemperature(1)) + “,”; statistics columns as <a href="/Walrus_Library/Classes/classWalrus/#function-getheader">getHeader()</a> describes.</li>
 </ul>
+
+<h3 id="function-printheader">function printHeader</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">size_t</span> <span class="n">printHeader</span><span class="p">(</span>
+    <span class="n">Print</span> <span class="o">&amp;</span> <span class="n">out</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Print the header matching <a href="">printReading()</a>: column names with units, each followed by a comma, for the chips selected by <a href="">beginReadings()</a>. No statistics columns: one reading has none.</p>
+
+<p><strong>Parameters</strong>:</p>
+
+<ul>
+  <li><strong>out</strong> Any Print destination (SdFat File, Serial, …).</li>
+</ul>
+
+<p><strong>Return</strong>: Bytes written.</p>
+
+<h3 id="function-printreading">function printReading</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">size_t</span> <span class="n">printReading</span><span class="p">(</span>
+    <span class="n">Print</span> <span class="o">&amp;</span> <span class="n">out</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Print the stored reading of the selected chips, each value followed by a comma. Does not acquire: call <a href="/Walrus_Library/Classes/classWalrus/#function-updatemeasurements">updateMeasurements()</a> first, or use <a href="">logReading()</a>. Writes: pressure [mBar], MS5803 temperature [C] for MS5803; external temperature [C] for MCP9808.</p>
+
+<p><strong>Return</strong>: Bytes written.</p>
+
+<h3 id="function-logreading">function logReading</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">size_t</span> <span class="n">logReading</span><span class="p">(</span>
+    <span class="n">Print</span> <span class="o">&amp;</span> <span class="n">out</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Take ONE reading of the selected chips and print it: the one-reading primitive for collecting many readings to a file.</p>
+
+<p><strong>Return</strong>: Bytes written.</p>
+
+<h3 id="function-beginreadings">function beginReadings</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">beginReadings</span><span class="p">(</span>
+    <span class="kt">uint8_t</span> <span class="n">component</span> <span class="o">=</span><span class="n">ALL</span><span class="p">,</span>
+    <span class="kt">uint16_t</span> <span class="n">n</span> <span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Begin a run of readings, selecting which chips they cover.</p>
+
+<p><strong>Parameters</strong>:</p>
+
+<ul>
+  <li><strong>component</strong> Walrus::ALL, <a href="/Walrus_Library/Classes/classWalrus/#enumvalue-ms5803">Walrus::MS5803</a> or <a href="/Walrus_Library/Classes/classWalrus/#enumvalue-mcp9808">Walrus::MCP9808</a>.</li>
+  <li><strong>n</strong> How many readings the run will take (the number of <a href="/Walrus_Library/Classes/classWalrus/#function-logreading">logReading()</a> calls to follow); with n &gt; 1 the device is told in advance (readings-requested word). Nothing on <a href="/Walrus_Library/Classes/classWalrus/">Walrus</a> is powered per batch, so the word only satisfies the protocol.</li>
+</ul>
+
+<h3 id="function-endreadings">function endReadings</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">endReadings</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>End a run of readings.</p>
 
 <h3 id="function-newdata">function newData</h3>
 
@@ -568,7 +884,7 @@ Walrus()
 
 <hr />
 
-<p>Updated on 2026-09-23 at 04:50:16 +0000</p>
+<p>Updated on 2026-09-23 at 16:11:18 +0000</p>
 
         
       </section>
