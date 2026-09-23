@@ -155,29 +155,16 @@ uint8_t Walrus::getFirmwareVersion() { return _dev.firmwareVersion(); }
 
 size_t Walrus::printFault(Print& out)
 {
-    //The chip names are Walrus's own; the kind names are universal (NW_Fault).
+    //The chip names are Walrus's own (the spec's chip table); NW_Fault prints the rest.
     static const char* const chips[] = {"MS5803", "MCP9808"};
-    uint8_t chip = faultChip(), kind = faultKind();
-    if(kind == 0) return out.print("none");
-    size_t n = 0;
-    if(chip == 7) n += out.print("unit");
-    else if(chip < 2) n += out.print(chips[chip]);
-    else { n += out.print("chip "); n += out.print(chip); }
-    n += out.print(": ");
-    return n + _dev.fault().printKind(out);
+    return _dev.fault().print(out, chips, 2);
 }
 
 String Walrus::faultNote()
 {
     //One word for a data-table note: the chip, then the kind ("MS5803NoACK").
     static const char* const chips[] = {"MS5803", "MCP9808"};
-    uint8_t chip = faultChip();
-    String w;
-    if(chip == 7) w = F("Unit");
-    else if(chip < 2) w = chips[chip];
-    else { w = F("Chip"); w += String(chip); }
-    w += _dev.fault().kindWord();
-    return w;
+    return _dev.fault().note(chips, 2);
 }
 
 String Walrus::getHeader()
