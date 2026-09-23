@@ -22,9 +22,12 @@ const unsigned long UpdatePeriod = 5000; //Update every 5 seconds
 
 void setup()
 {
-	Sensor.begin(); //Initialize sensor
 	Serial.begin(9600); //Initialize serial for basic communication 
 	Serial.print("Begin Walrus Demo...\n\n"); 
+	if(!Sensor.begin()) { //Initialize sensor; say why if it refuses
+		Serial.print("Walrus not found: ");
+		Serial.println(Sensor.beginFailure());
+	}
 	Serial.println(Sensor.getHeader()); //Print header from Walrus to identify values
 }
 
