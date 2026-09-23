@@ -23,6 +23,7 @@ uint8_t Walrus::begin(uint8_t Address_)
 {
     Wire.begin(); //Initialize Wire instance
     ADR = Address_; //Copy address to local
+    return 0; //FIX! begin() never returned a value (undefined behaviour); 0 until it checks the device
 }
 
 // float Walrus::getTemperature(uint8_t Location) //Returns temp in C from either subsensor
