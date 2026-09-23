@@ -44,7 +44,7 @@ Distributed as-is; no warranty is given.
  *
  * \verbatim [![DOI](https://zenodo.org/badge/219609527.svg)](https://zenodo.org/badge/latestdoi/219609527) \endverbatim
  */
-class Walrus
+class Walrus : public NW_Sensor
 {
     public:
         /** @brief Default I2C address: NW-Device-Specification Schema 1 'W' (0x57). */
@@ -225,7 +225,12 @@ class Walrus
         /** @brief The report as one word for a note column: "MS5803NoACK", "UnitReset"; "UnitNone" when none. */
         String reportNote();
         /** @brief Print one status line for a logger's status file: name, serial, versions, the last report, Pages 0-2 in hex; no newline, no acknowledge. */
-        size_t printStatus(Print& out);
+        size_t printStatus(Print& out, bool boot = false) override;
+        // --- NW_Sensor: the logger's view (Margay::watch) ---
+        const char* name() const override { return "Walrus"; }
+        bool reportIsFault() override;
+        uint8_t bootReportKind() override;
+        void clearBootReport() override;
         /** @brief Why the last begin() refused, as one word: "NoACK", "NotSchema1", "WrongName", "OldFirmware"; "None" after success. */
         String beginFailure();
         uint8_t getHardwareMajor();

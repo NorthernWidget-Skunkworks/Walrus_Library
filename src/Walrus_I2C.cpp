@@ -149,11 +149,15 @@ size_t Walrus::printReport(Print& out)
     return _dev.report().print(out, chips, 2);
 }
 
-size_t Walrus::printStatus(Print& out)
+size_t Walrus::printStatus(Print& out, bool boot)
 {
     static const char* const chips[] = {"MS5803", "MCP9808"};
-    return _dev.printSnapshot(out, chips, 2);
+    return _dev.printSnapshot(out, chips, 2, boot);
 }
+
+bool    Walrus::reportIsFault()   { return _dev.report().isFault(); }
+uint8_t Walrus::bootReportKind()  { return _dev.bootReport().kind(); }
+void    Walrus::clearBootReport() { _dev.clearBootReport(); }
 
 String Walrus::reportNote()
 {
