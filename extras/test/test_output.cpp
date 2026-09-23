@@ -127,6 +127,10 @@ int main() {
     printf("[dead MS5803] N=10: update=%d readings taken=%d pressureCount=%u pressure=%.2f note='%s'\n", ok, k, s.getPressureCount(), s.getPressure(), s.reportNote().c_str());
     onReading = nullptr; }
 
+  // The status line for a logger's status file.
+  loadImage(101325, 2137, 1850);
+  { Walrus s; s.begin(); s.updateMeasurements(); char sb[260]; BufferPrint sp(sb, sizeof sb); size_t k = s.printStatus(sp); printf("[status] %zu bytes: %s\n", k, sb); }
+
   fprintf(stderr, "bus transactions total: %u\n", Wire.transactions);   // metric, not output
   return 0;
 }

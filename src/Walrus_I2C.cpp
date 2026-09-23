@@ -149,6 +149,12 @@ size_t Walrus::printReport(Print& out)
     return _dev.report().print(out, chips, 2);
 }
 
+size_t Walrus::printStatus(Print& out)
+{
+    static const char* const chips[] = {"MS5803", "MCP9808"};
+    return _dev.printSnapshot(out, chips, 2);
+}
+
 String Walrus::reportNote()
 {
     //One word for a data-table note: the chip, then the kind ("MS5803NoACK").
